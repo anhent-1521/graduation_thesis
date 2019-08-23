@@ -1,0 +1,70 @@
+package com.example.tuananhe.myapplication.screen.video
+
+import android.media.MediaMetadataRetriever
+import com.example.tuananhe.myapplication.data.model.Video
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileFilter
+
+class VideoRetriever(private var view: VideoContract.View) : VideoContract.Presenter {
+
+    private val fileFilter = FileFilter { file ->
+        file.name.toLowerCase().endsWith("mp4") or file.name.toLowerCase().endsWith("mpeg")
+    }
+
+    override fun loadVideos(directory: String) {
+        try {
+            val outputFile = File(directory)
+            val files: Array<File> =
+                outputFile.listFiles(fileFilter) //crash nếu không xin quyền trước
+
+            var videos: ArrayList<Video>
+            CoroutineScope(Dispatchers.IO).launch {
+                videos = extractVideos(files)
+                withContext(Dispatchers.Main) {
+                    view.onGetVideoSuccess(videos)
+                }
+            }
+        } catch (e: Exception) {
+            view.onGetVideoFail()
+            e.printStackTrace()
+        }
+    }
+
+    private fun extractVideos(files: Array<File>): ArrayList<Video> {
+        val videos = ArrayList<Video>()
+        val metadataRetriever = MediaMetadataRetriever()
+        for (file in files) {
+            try {
+                metadataRetriever.setDataSource(file.absolutePath)
+                val name = file.name
+                val duration =
+                    metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                val width =
+                    metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+                val height =
+                    metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+                val path = file.path
+
+                val videoDuration = if (duration == null) 0 else duration.toLong() / 1000
+                val videoWidth = width?.toInt() ?: 0
+                val videoHeight = height?.toInt() ?: 0
+                val video = Video(
+                    name,
+                    path,
+                    videoDuration,
+                    videoWidth,
+                    videoHeight
+                )
+                videos.add(video)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        metadataRetriever.release()
+        return videos
+    }
+}
