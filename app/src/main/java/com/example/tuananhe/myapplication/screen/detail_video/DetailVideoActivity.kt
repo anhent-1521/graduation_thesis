@@ -2,9 +2,9 @@ package com.example.tuananhe.myapplication.screen.detail_video
 
 import android.media.MediaPlayer
 import android.os.Handler
-import android.util.Log
 import android.view.SurfaceHolder
 import android.view.View.VISIBLE
+import android.widget.SeekBar
 import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
@@ -32,10 +32,22 @@ class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
     override fun initViews() {
         surface_view.setOnClickListener { fadeControl() }
         image_play_pause.setOnClickListener { onPlayPauseClicked() }
+        seekbar_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                player?.seekTo(progress)
+            }
+
+        })
     }
 
     override fun initComponents() {
-        video = intent.getParcelableExtra<Video>("video")
+        video = intent.getParcelableExtra("video")
 
         player = MediaPlayer()
         player?.setScreenOnWhilePlaying(true)
@@ -85,15 +97,13 @@ class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
     private fun resumeAndPauseVideo() {
         player?.let {
             if (player?.isPlaying as Boolean) {
-                Log.d("----", "pause ${player?.currentPosition} ")
                 player?.pause()
+                handler.removeCallbacks(runnable)
                 image_play_pause.setBackgroundResource(R.drawable.bg_play)
-                Log.d("----", "pause ${player?.currentPosition} ")
             } else {
-                Log.d("----", "play ${player?.currentPosition} ")
+                handler.post(runnable)
                 player?.start()
                 image_play_pause.setBackgroundResource(R.drawable.bg_pause)
-                Log.d("----", "play ${player?.currentPosition} ")
             }
         }
     }
@@ -122,7 +132,6 @@ class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
         val current = player?.currentPosition ?: 0
         seekbar_progress.progress = current
         text_current.text = MediaUtil.getVideoDuration(current / 1000.toLong())
-//        Log.d("----", " $current ")
     }
 
     override fun onDestroy() {
