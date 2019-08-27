@@ -1,8 +1,11 @@
 package com.example.tuananhe.myapplication.screen.detail_video
 
+import android.graphics.Point
 import android.media.MediaPlayer
 import android.os.Handler
 import android.view.SurfaceHolder
+import android.view.View
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 import android.view.View.VISIBLE
 import android.widget.SeekBar
 import com.example.tuananhe.myapplication.BaseActivity
@@ -11,6 +14,7 @@ import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.activity_detail_video.*
+
 
 class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
 
@@ -30,6 +34,12 @@ class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
     override fun getLayoutResId(): Int = R.layout.activity_detail_video
 
     override fun initViews() {
+        surface_view.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        surface_view.setOnSystemUiVisibilityChangeListener {
+            if (((it and SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0) and (image_play_pause.visibility != VISIBLE)) {
+                fadeOutControl()
+            }
+        }
         surface_view.setOnClickListener { fadeControl() }
         image_play_pause.setOnClickListener { onPlayPauseClicked() }
         seekbar_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -37,12 +47,11 @@ class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                player?.seekTo(seekBar?.progress ?: 0)
             }
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                player?.seekTo(progress)
             }
-
         })
     }
 
@@ -72,10 +81,27 @@ class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
         player?.setDataSource(video?.path)
         player?.prepare()
         player?.setOnPreparedListener {
+            setSurfaceSize()
             player?.start()
             initControl()
             handler.post(runnable)
         }
+    }
+
+    private fun setSurfaceSize() {
+        val screenPoint = Point()
+        val display = windowManager.defaultDisplay
+        display.getRealSize(screenPoint)
+        val width = player?.videoWidth ?: screenPoint.x
+        val height = player?.videoHeight ?: screenPoint.y
+        val videoHeight = height / width.toFloat() * screenPoint.x
+
+        val param = surface_view.layoutParams
+        param.width = screenPoint.x
+        param.height = videoHeight.toInt()
+
+        surface_view.layoutParams = param
+
     }
 
     private fun initControl() {
@@ -109,22 +135,37 @@ class DetailVideoActivity : BaseActivity(), SurfaceHolder.Callback {
     }
 
     private fun completeVideo() {
+        handler.removeCallbacks(runnable)
         isComplete = true
         player?.reset()
         image_play_pause.setBackgroundResource(R.drawable.bg_play)
     }
 
     private fun fadeControl() {
+        if (image_play_pause.visibility == VISIBLE) {
+            fadeInControl()
+            surface_view.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        } else {
+            fadeOutControl()
+            surface_view.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        }
+
+    }
+
+    private fun fadeInControl() {
         with(ExtensionUtil()) {
-            if (image_play_pause.visibility == VISIBLE) {
-                image_play_pause.fadeIn()
-                linear_progress.fadeIn()
-                linear_top.fadeIn()
-            } else {
-                image_play_pause.fadeOut()
-                linear_progress.fadeOut()
-                linear_top.fadeOut()
-            }
+            image_play_pause.fadeIn()
+            linear_progress.fadeIn()
+            linear_top.fadeIn()
+        }
+    }
+
+    private fun fadeOutControl() {
+        with(ExtensionUtil()) {
+            image_play_pause.fadeOut()
+            linear_progress.fadeOut()
+            linear_top.fadeOut()
         }
     }
 

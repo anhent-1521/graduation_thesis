@@ -9,7 +9,12 @@
     <SurfaceView
         android:id="@+id/surface_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/image_play_pause"
@@ -27,9 +32,9 @@
         android:id="@+id/linear_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="?attr/actionBarSize"
         android:background="#af000000"
         android:padding="8dp"
-        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -47,9 +52,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:progress="100"
             android:progressDrawable="@drawable/seekbar_progress"
-            android:thumb="@drawable/seekbar_thumb"
-            android:progress="100" />
+            android:thumb="@drawable/seekbar_thumb" />
 
         <TextView
             android:id="@+id/text_duration"

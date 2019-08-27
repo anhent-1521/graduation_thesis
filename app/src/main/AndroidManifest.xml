@@ -26,6 +26,7 @@
         </activity>
         <activity
             android:name=".screen.main.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,9 +36,11 @@
         </activity>
         <activity
             android:name=".screen.detail_image.DetailImageActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/DetailImageTheme" />
         <activity
             android:name=".screen.detail_video.DetailVideoActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/DetailImageTheme" />
     </application>
 
