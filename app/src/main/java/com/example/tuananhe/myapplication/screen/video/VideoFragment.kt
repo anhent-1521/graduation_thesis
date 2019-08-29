@@ -1,6 +1,5 @@
 package com.example.tuananhe.myapplication.screen.video
 
-import android.content.Intent
 import android.os.Environment
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
@@ -31,9 +30,7 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     }
 
     private fun gotoDetailVideo(video: Video) {
-        val intent = Intent(context, DetailVideoActivity::class.java)
-        intent.putExtra("video", video)
-        startActivity(intent)
+        startActivity(DetailVideoActivity.getDetailVideoActivityIntent(context, video))
     }
 
 }
