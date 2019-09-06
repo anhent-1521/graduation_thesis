@@ -10,11 +10,13 @@ import com.example.tuananhe.myapplication.screen.image.ImageContract
 import com.example.tuananhe.myapplication.screen.image.ImageRetriever
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
+import com.example.tuananhe.myapplication.utils.FileUtil
 import kotlinx.android.synthetic.main.activity_detail_image.*
 
 class DetailImageActivity : BaseActivity(), ImageContract.View {
 
     var imageRetriever: ImageRetriever? = null
+    var images = ArrayList<Image>()
     private var position: Int = 0
 
     override fun getLayoutResId(): Int = R.layout.activity_detail_image
@@ -24,6 +26,13 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
         image_back.setOnClickListener {
             onBackPressed()
         }
+
+        linear_share.setOnClickListener {
+            FileUtil.shareImage(
+                this,
+                images[view_pager.currentItem].path
+            )
+        }
     }
 
     override fun initComponents() {
@@ -32,6 +41,7 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
     }
 
     override fun onGetImageSuccess(images: ArrayList<Image>) {
+        this.images = images
         val pagerAdapter = DetailImagePagerAdapter(supportFragmentManager, images)
         view_pager.adapter = pagerAdapter
         view_pager.currentItem = position

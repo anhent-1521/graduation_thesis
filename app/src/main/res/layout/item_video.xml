@@ -95,28 +95,31 @@
 
         <ImageView
             android:id="@+id/image_share"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginStart="8dp"
-            android:background="@drawable/ic_share"
+            android:paddingTop="8dp"
+            android:src="@drawable/ic_share"
             app:layout_constraintBottom_toBottomOf="@id/image_thumbnail"
             app:layout_constraintStart_toEndOf="@id/image_thumbnail" />
 
         <ImageView
             android:id="@+id/image_delete"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginStart="8dp"
-            android:background="@drawable/ic_delete"
+            android:paddingTop="8dp"
+            android:src="@drawable/ic_delete"
             app:layout_constraintBottom_toBottomOf="@id/image_thumbnail"
             app:layout_constraintStart_toEndOf="@id/image_share" />
 
         <ImageView
             android:id="@+id/image_edit"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginStart="8dp"
-            android:background="@drawable/ic_edit"
+            android:paddingTop="8dp"
+            android:src="@drawable/ic_edit"
             app:layout_constraintBottom_toBottomOf="@id/image_thumbnail"
             app:layout_constraintStart_toEndOf="@id/image_delete" />
 

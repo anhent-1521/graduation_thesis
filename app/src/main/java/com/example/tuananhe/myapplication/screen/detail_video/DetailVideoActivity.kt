@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Handler
+import android.support.v4.content.FileProvider
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 import android.view.View.VISIBLE
@@ -15,8 +15,10 @@ import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
+import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.activity_detail_video.*
+import java.io.File
 
 
 class DetailVideoActivity : BaseActivity() {
@@ -94,12 +96,7 @@ class DetailVideoActivity : BaseActivity() {
 
 
     private fun openShare() {
-        val uri = Uri.parse(video?.path)
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        intent.type = "video/mp4"
-        intent.putExtra(Intent.EXTRA_STREAM, uri)
-        startActivity(Intent.createChooser(intent, "Share image using"))
+        FileUtil.shareImage(this, video?.path)
     }
 
     private fun playVideo() {

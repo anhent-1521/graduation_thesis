@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
+import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.item_video.view.*
 
@@ -35,6 +36,7 @@ class VideoAdapter(private var videos: ArrayList<Video>) :
             itemView.text_name.text = video.name
             itemView.text_size.text = MediaUtil.getVideoSize(video.path)
             itemView.setOnClickListener { listener?.invoke(video) }
+            itemView.image_share.setOnClickListener { FileUtil.shareVideo(itemView.context, video.path) }
         }
     }
 
