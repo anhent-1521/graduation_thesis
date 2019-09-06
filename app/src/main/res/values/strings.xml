@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">My Application</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <string name="dialog_delete_video_title">Are you sure to delete video from your device local storage?</string>
+    <string name="dialog_edit_name">Edit new title of the video:</string>
+
 </resources>

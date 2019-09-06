@@ -2,7 +2,7 @@ package com.example.tuananhe.myapplication
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.example.tuananhe.myapplication.utils.ColorAppUtil
+import com.example.tuananhe.myapplication.utils.AppUtil
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -14,7 +14,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutResId())
         if (getTitleBarColorId() > 0) {
-            ColorAppUtil.changeTitleBarColor(this, getTitleBarColorId())
+            AppUtil.changeTitleBarColor(this, getTitleBarColorId())
         }
         initViews()
         initComponents()

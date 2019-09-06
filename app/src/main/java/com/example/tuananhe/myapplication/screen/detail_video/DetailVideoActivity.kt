@@ -5,11 +5,9 @@ import android.content.Intent
 import android.graphics.Point
 import android.media.MediaPlayer
 import android.os.Handler
-import android.support.v4.content.FileProvider
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.SeekBar
 import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
@@ -18,7 +16,6 @@ import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.activity_detail_video.*
-import java.io.File
 
 
 class DetailVideoActivity : BaseActivity() {
@@ -65,7 +62,7 @@ class DetailVideoActivity : BaseActivity() {
                 fadeOutControl()
             }
         }
-        video_view.setOnClickListener { fadeControl() }
+        constraint_parent.setOnClickListener { fadeControl() }
         video_view.keepScreenOn = true
 
         image_play_pause.setOnClickListener { onPlayPauseClicked() }
@@ -75,6 +72,10 @@ class DetailVideoActivity : BaseActivity() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (isComplete) {
+                    seekBar?.progress = seekBar?.max ?: 0
+                    return
+                }
                 video_view.seekTo(seekBar?.progress ?: 0)
             }
 
@@ -116,17 +117,22 @@ class DetailVideoActivity : BaseActivity() {
         val screenPoint = Point()
         val display = windowManager.defaultDisplay
         display.getRealSize(screenPoint)
+
         val width = player?.videoWidth ?: screenPoint.x
         val height = player?.videoHeight ?: screenPoint.y
-        val videoHeight = height / width.toFloat() * screenPoint.x
 
+        val videoHeight = height / width.toFloat() * screenPoint.x
         val param = video_view.layoutParams
-        param.width = screenPoint.x
-        param.height =
-            if (videoHeight.toInt() > param.height) param.height else ViewGroup.LayoutParams.MATCH_PARENT
+
+        if (screenPoint.x / width > 2) {
+            param.width = (width / height.toFloat() * screenPoint.y).toInt()
+            param.height = screenPoint.y
+        } else {
+            param.width = screenPoint.x
+            param.height = videoHeight.toInt()
+        }
 
         video_view.layoutParams = param
-
     }
 
     private fun initControl() {
@@ -214,6 +220,12 @@ class DetailVideoActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        progressHandler.removeCallbacks(progressRunnable)
+        controlHandler.removeCallbacks(controlRunnable)
+    }
+
+    override fun onPause() {
+        super.onPause()
         progressHandler.removeCallbacks(progressRunnable)
         controlHandler.removeCallbacks(controlRunnable)
     }
