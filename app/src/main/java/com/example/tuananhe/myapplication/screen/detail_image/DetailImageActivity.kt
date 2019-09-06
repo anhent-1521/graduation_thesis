@@ -33,6 +33,10 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
                 images[view_pager.currentItem].path
             )
         }
+
+        linear_delete.setOnClickListener {
+            showDeleteDialog()
+        }
     }
 
     override fun initComponents() {
@@ -78,5 +82,9 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
             linear_top.showUp()
             constraint_bottom.showUp()
         }
+    }
+
+    private fun showDeleteDialog() {
+
     }
 }

@@ -73,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
         }catch (NullPointerException|SecurityException e) {
 
         }
+        String url = "asas fasf fasfasf";
+
+        int a = url.lastIndexOf("?");
     }
 
     private void loadVideo() {

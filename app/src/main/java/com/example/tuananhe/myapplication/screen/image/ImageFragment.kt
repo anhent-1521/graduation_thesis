@@ -12,21 +12,19 @@ import kotlinx.android.synthetic.main.fragment_image.*
 
 class ImageFragment : BaseFragment(), ImageContract.View {
 
-    var imageAdapter: ImageAdapter? = null
-    var imageRetriever: ImageRetriever? = null
+    private var imageAdapter: ImageAdapter? = null
+    private var imageRetriever: ImageRetriever? = null
 
     override fun getLayoutResId(): Int = R.layout.fragment_image
 
     override fun initViews() {
         imageRetriever = ImageRetriever(this)
-        imageRetriever?.loadImages(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + Constant.IMAGE_DIRECTORY)
     }
 
     override fun onGetImageSuccess(images: ArrayList<Image>) {
         imageAdapter = ImageAdapter(images)
         imageAdapter?.listener = { pos -> gotoDetailImage(pos) }
         recycler_images.adapter = imageAdapter
-//        recycler_images.addItemDecoration(ItemDE)
     }
 
     override fun onGetImageFail() {
@@ -38,5 +36,10 @@ class ImageFragment : BaseFragment(), ImageContract.View {
         val intent = Intent(context, DetailImageActivity::class.java)
         intent.putExtra("position", pos)
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        imageRetriever?.loadImages(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + Constant.IMAGE_DIRECTORY)
     }
 }
