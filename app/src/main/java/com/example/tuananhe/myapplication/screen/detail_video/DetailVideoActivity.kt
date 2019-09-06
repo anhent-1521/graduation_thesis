@@ -2,12 +2,14 @@ package com.example.tuananhe.myapplication.screen.detail_video
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Point
 import android.media.MediaPlayer
 import android.os.Handler
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.widget.SeekBar
 import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
@@ -56,6 +58,9 @@ class DetailVideoActivity : BaseActivity() {
     override fun getLayoutResId(): Int = R.layout.activity_detail_video
 
     override fun initViews() {
+        video = intent.getParcelableExtra(VIDEO_EXTRA)
+        setScreenOrientation()
+
         video_view.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         video_view.setOnSystemUiVisibilityChangeListener {
             if (((it and SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0) and (image_play_pause.visibility != VISIBLE)) {
@@ -91,10 +96,18 @@ class DetailVideoActivity : BaseActivity() {
     }
 
     override fun initComponents() {
-        video = intent.getParcelableExtra(VIDEO_EXTRA)
         playVideo()
     }
 
+    private fun setScreenOrientation() {
+        val width = video?.width ?: 0
+        val height = video?.height ?: 0
+        if (width >= height) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        }
+        val marginParam = linear_progress.layoutParams as ViewGroup.MarginLayoutParams
+        marginParam.bottomMargin = resources.getDimensionPixelOffset(R.dimen.seek_bar_padding_bottom)
+    }
 
     private fun openShare() {
         FileUtil.shareImage(this, video?.path)
