@@ -27,6 +27,11 @@ class VideoAdapter(private var videos: ArrayList<Video>) :
         holder.bindData(videos[position])
     }
 
+    fun update(videos: ArrayList<Video>) {
+        this.videos = videos
+        notifyDataSetChanged()
+    }
+
     fun delete(video: Video) {
         val pos = videos.indexOf(video)
         if (pos < 0) return

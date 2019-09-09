@@ -2,6 +2,7 @@ package com.example.tuananhe.myapplication.screen.video
 
 import android.content.Context
 import android.os.Environment
+import android.support.v7.widget.LinearLayoutManager
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
@@ -16,6 +17,7 @@ class VideoFragment : BaseFragment(), VideoContract.View {
 
     private var videoAdapter: VideoAdapter? = null
     private var videoRetriever: VideoRetriever? = null
+    private var lastListPosition = 0
 
     override fun getLayoutResId(): Int = R.layout.fragment_video
 
@@ -31,12 +33,17 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     }
 
     private fun setupAdapter(videos: ArrayList<Video>) {
-        videoAdapter = VideoAdapter(videos)
-        videoAdapter?.listener = { video -> gotoDetailVideo(video) }
-        videoAdapter?.shareListener = { path -> FileUtil.shareVideo(context, path) }
-        videoAdapter?.deleteListener = { video -> deleteVideo(video) }
-        videoAdapter?.renameListener = { video, pos -> renameVideo(video, pos) }
-        recycler_videos.adapter = videoAdapter
+        if (videoAdapter == null) {
+            videoAdapter = VideoAdapter(videos)
+            videoAdapter?.listener = { video -> gotoDetailVideo(video) }
+            videoAdapter?.shareListener = { path -> FileUtil.shareVideo(context, path) }
+            videoAdapter?.deleteListener = { video -> deleteVideo(video) }
+            videoAdapter?.renameListener = { video, pos -> renameVideo(video, pos) }
+            recycler_videos.adapter = videoAdapter
+        } else {
+            videoAdapter?.update(videos)
+            recycler_videos.scrollToPosition(lastListPosition)
+        }
     }
 
     private fun gotoDetailVideo(video: Video) {
@@ -60,6 +67,11 @@ class VideoFragment : BaseFragment(), VideoContract.View {
             }
             dialog.show()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        lastListPosition = (recycler_videos.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
     }
 
     private fun renameVideo(video: Video, pos: Int) {
