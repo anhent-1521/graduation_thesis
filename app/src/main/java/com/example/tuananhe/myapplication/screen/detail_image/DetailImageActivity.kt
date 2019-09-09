@@ -11,6 +11,7 @@ import com.example.tuananhe.myapplication.screen.image.ImageRetriever
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
+import com.example.tuananhe.myapplication.utils.view.dialog.ImageInfoDialog
 import kotlinx.android.synthetic.main.activity_detail_image.*
 
 class DetailImageActivity : BaseActivity(), ImageContract.View {
@@ -36,6 +37,9 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
 
         linear_delete.setOnClickListener {
             showDeleteDialog()
+        }
+        image_info.setOnClickListener {
+            ImageInfoDialog(this).show()
         }
     }
 

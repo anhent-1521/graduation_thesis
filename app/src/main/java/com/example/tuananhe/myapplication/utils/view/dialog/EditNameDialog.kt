@@ -12,7 +12,7 @@ class EditNameDialog(context: Context, private val name: String?) : BaseDialog(c
     override fun getLayoutResId(): Int = R.layout.dialog_edit_name
 
     override fun initView() {
-        window.setSoftInputMode (WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        window.setSoftInputMode (WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         edit_name.setText(name, TextView.BufferType.EDITABLE)
         edit_name.setSelection(0, name?.length ?: 0)
