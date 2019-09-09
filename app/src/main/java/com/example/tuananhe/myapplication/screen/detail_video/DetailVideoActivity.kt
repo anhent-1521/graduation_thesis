@@ -2,12 +2,14 @@ package com.example.tuananhe.myapplication.screen.detail_video
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Point
 import android.media.MediaPlayer
 import android.os.Handler
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.widget.SeekBar
 import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
@@ -16,7 +18,6 @@ import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.activity_detail_video.*
-
 
 class DetailVideoActivity : BaseActivity() {
 
@@ -52,10 +53,20 @@ class DetailVideoActivity : BaseActivity() {
     }
     private var progressHandler = Handler()
     private var controlHandler = Handler()
+    private var screenWidth = 0
+    private var screenHeight = 0
+    private var screenRatio = 0f
+    private var realWidth = 0
+    private var realHeight = 0
+    private var realRatio = 0f
 
     override fun getLayoutResId(): Int = R.layout.activity_detail_video
 
     override fun initViews() {
+        video = intent.getParcelableExtra(VIDEO_EXTRA)
+        getSize()
+        setScreenOrientation()
+
         video_view.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         video_view.setOnSystemUiVisibilityChangeListener {
             if (((it and SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0) and (image_play_pause.visibility != VISIBLE)) {
@@ -91,10 +102,30 @@ class DetailVideoActivity : BaseActivity() {
     }
 
     override fun initComponents() {
-        video = intent.getParcelableExtra(VIDEO_EXTRA)
         playVideo()
     }
 
+    private fun getSize() {
+        val screenPoint = Point()
+        val display = windowManager.defaultDisplay
+        display.getRealSize(screenPoint)
+        screenWidth = screenPoint.x
+        screenHeight = screenPoint.y
+        screenRatio = screenWidth / screenHeight.toFloat()
+
+        realWidth = video?.width ?: screenWidth
+        realHeight = video?.height ?: screenHeight
+        realRatio = realWidth / realHeight.toFloat()
+    }
+
+    private fun setScreenOrientation() {
+        if (realWidth >= realHeight) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+            val marginParam = linear_progress.layoutParams as ViewGroup.MarginLayoutParams
+            marginParam.bottomMargin =
+                resources.getDimensionPixelOffset(R.dimen.seek_bar_padding_bottom)
+        }
+    }
 
     private fun openShare() {
         FileUtil.shareImage(this, video?.path)
@@ -114,22 +145,27 @@ class DetailVideoActivity : BaseActivity() {
     }
 
     private fun setVideoSize() {
-        val screenPoint = Point()
-        val display = windowManager.defaultDisplay
-        display.getRealSize(screenPoint)
-
-        val width = player?.videoWidth ?: screenPoint.x
-        val height = player?.videoHeight ?: screenPoint.y
-
-        val videoHeight = height / width.toFloat() * screenPoint.x
         val param = video_view.layoutParams
-
-        if (screenPoint.x / width > 2) {
-            param.width = (width / height.toFloat() * screenPoint.y).toInt()
-            param.height = screenPoint.y
+        if (realWidth >= realHeight) {
+            if (realHeight >= screenHeight) {
+                param.width = if (realWidth >= screenWidth) screenWidth else realWidth
+                param.height = screenHeight
+            } else {
+                val width = (realWidth / realHeight.toFloat() * screenHeight).toInt()
+                param.width = if (width >= screenWidth) screenWidth else width
+                param.height = screenHeight
+            }
+        } else if (screenWidth / realWidth > 2) {
+            if (screenHeight / realHeight > 3) {
+                param.width = screenWidth
+                param.height = (realHeight / realWidth.toFloat() * screenWidth).toInt()
+            } else {
+                param.width = (realWidth / realHeight.toFloat() * screenHeight).toInt()
+                param.height = screenHeight
+            }
         } else {
-            param.width = screenPoint.x
-            param.height = videoHeight.toInt()
+            param.width = screenWidth
+            param.height = (realHeight / realWidth.toFloat() * screenWidth).toInt()
         }
 
         video_view.layoutParams = param
