@@ -11,13 +11,14 @@ import com.example.tuananhe.myapplication.screen.image.ImageRetriever
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
+import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.ImageInfoDialog
 import kotlinx.android.synthetic.main.activity_detail_image.*
 
 class DetailImageActivity : BaseActivity(), ImageContract.View {
 
-    var imageRetriever: ImageRetriever? = null
-    var images = ArrayList<Image>()
+    private var imageRetriever: ImageRetriever? = null
+    private var images = ArrayList<Image>()
     private var position: Int = 0
 
     override fun getLayoutResId(): Int = R.layout.activity_detail_image
@@ -36,11 +37,13 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
         }
 
         linear_delete.setOnClickListener {
-            showDeleteDialog()
+            deleteImage(images[view_pager.currentItem])
         }
         image_info.setOnClickListener {
-            ImageInfoDialog(this).show()
+            ImageInfoDialog(this, images[view_pager.currentItem]).show()
         }
+        text_name.text = this.getString(R.string.text_location_image_info)
+
     }
 
     override fun initComponents() {
@@ -88,7 +91,15 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
         }
     }
 
-    private fun showDeleteDialog() {
+
+    private fun deleteImage(image: Image) {
+        val dialog = CommonDialog(this, getString(R.string.dialog_delete_video_title))
+        dialog.optimisticListener = {
+            FileUtil.deleteFile(image.path)
+            finish()
+        }
+        dialog.show()
 
     }
 }
+
