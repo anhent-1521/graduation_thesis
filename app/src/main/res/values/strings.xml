@@ -21,7 +21,13 @@
 
 
 
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
     <string name="dialog_delete_video_title">Are you sure to delete video from your device local storage?</string>
     <string name="dialog_edit_name">Edit new title of the video:</string>
+    <string name="text_title_image_info">Image information</string>
+    <string name="text_location_image_info">Location:</string>
+    <string name="text_resolution_image_info">Resolution:</string>
+    <string name="text_size_image_info">Size:</string>
 
 </resources>

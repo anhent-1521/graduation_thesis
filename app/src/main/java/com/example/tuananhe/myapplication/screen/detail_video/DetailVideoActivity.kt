@@ -17,6 +17,7 @@ import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
+import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import kotlinx.android.synthetic.main.activity_detail_video.*
 
 class DetailVideoActivity : BaseActivity() {
@@ -99,6 +100,10 @@ class DetailVideoActivity : BaseActivity() {
             onPlayPauseClicked()
             openShare()
         }
+        image_delete.setOnClickListener {
+            onPlayPauseClicked()
+            deleteVideo(video)
+        }
     }
 
     override fun initComponents() {
@@ -129,6 +134,17 @@ class DetailVideoActivity : BaseActivity() {
 
     private fun openShare() {
         FileUtil.shareImage(this, video?.path)
+    }
+
+    private fun deleteVideo(video: Video?) {
+        val dialog = CommonDialog(
+            this, getString(R.string.dialog_delete_video_title)
+        )
+        dialog.optimisticListener = {
+            FileUtil.deleteFile(video?.path)
+            finish()
+        }
+        dialog.show()
     }
 
     private fun playVideo() {

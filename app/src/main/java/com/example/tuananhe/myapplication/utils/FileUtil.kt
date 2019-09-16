@@ -34,6 +34,7 @@ class FileUtil {
         }
 
         fun deleteFile(path: String?) {
+            if (path == null) return
             val file = File(path)
             if (file.exists()) {
                 file.delete()

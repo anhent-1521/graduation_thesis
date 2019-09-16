@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="32dp"
+    android:layout_margin="54dp"
     android:background="@drawable/bg_dialog_optimistic_idle">
 
     <TextView
@@ -14,45 +14,57 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/dialog_edit_name"
+        android:gravity="center"
+        android:text="@string/text_title_image_info"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/edit_name"
+    <TextView
+        android:id="@+id/text_location"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:maxLines="5"
+        android:textColor="@color/color_transparent_black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_title"
+        tools:text="Location" />
+
+
+    <TextView
+        android:id="@+id/text_resolution"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/bg_edit_text_name"
-        android:padding="8dp"
         android:singleLine="true"
         android:textColor="@color/color_transparent_black"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/text_title"
-        tools:text="asdasdsadasdsdsd" />
+        app:layout_constraintTop_toBottomOf="@id/text_location"
+        tools:text="Location" />
 
-    <Button
-        android:id="@+id/button_cancel"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
+
+    <TextView
+        android:id="@+id/text_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_dialog_cancel_idle"
-        android:text="@string/dialog_cancel"
-        android:textColor="@color/color_default_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_name"
-        app:layout_constraintWidth_percent="0.4" />
+        android:layout_marginEnd="16dp"
+        android:singleLine="true"
+        android:textColor="@color/color_transparent_black"
+        app:layout_constraintTop_toBottomOf="@id/text_resolution"
+        tools:text="Location" />
 
     <Button
         android:id="@+id/button_optimistic"
-        android:layout_width="0dp"
+        android:layout_width="64dp"
         android:layout_height="36dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
@@ -62,7 +74,8 @@
         android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_name"
+        app:layout_constraintTop_toBottomOf="@id/text_size"
         app:layout_constraintWidth_percent="0.4" />
 
 </android.support.constraint.ConstraintLayout>
+
