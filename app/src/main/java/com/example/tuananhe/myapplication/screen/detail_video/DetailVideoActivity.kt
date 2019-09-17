@@ -97,11 +97,19 @@ class DetailVideoActivity : BaseActivity() {
 
         image_back.setOnClickListener { onBackPressed() }
         image_share.setOnClickListener {
-            onPlayPauseClicked()
+            player?.let {
+                if (player?.isPlaying as Boolean) {
+                    onPlayPauseClicked()
+                }
+            }
             openShare()
         }
         image_delete.setOnClickListener {
-            onPlayPauseClicked()
+            player?.let {
+                if (player?.isPlaying as Boolean) {
+                    onPlayPauseClicked()
+                }
+            }
             deleteVideo(video)
         }
     }

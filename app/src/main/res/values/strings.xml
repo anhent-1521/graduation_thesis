@@ -2,25 +2,7 @@
     <string name="app_name">My Application</string>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //dialog
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_delete_video_title">Are you sure to delete video from your device local storage?</string>
@@ -29,5 +11,20 @@
     <string name="text_location_image_info">Location:</string>
     <string name="text_resolution_image_info">Resolution:</string>
     <string name="text_size_image_info">Size:</string>
+
+    //setting
+    <string name="text_video_setting">Video Settings</string>
+    <string name="text_video_resolution">Video Resolution</string>
+    <string name="text_video_quality">Video Quality</string>
+    <string name="text_video_quality_note">Higher quality means larger video file size</string>
+    <string name="text_video_fps">FPS</string>
+    <string name="text_video_fps_note">Higher frame rate make video smoother but use more CPU</string>
+    <string name="text_video_audio">Record Audio</string>
+    <string name="text_video_audio_note">Internal audio record is not allowed by Android now</string>
+    <string name="text_video_location">Video Location</string>
+
+    //edit
+    <string name="text_video_editor">Video Editor</string>
+    <string name="text_image_editor">Image Editor</string>
 
 </resources>

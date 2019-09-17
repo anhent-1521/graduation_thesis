@@ -36,13 +36,13 @@ abstract class BaseDialog(context: Context) : AppCompatDialog(context) {
                     R.drawable.bg_dialog_optimistic_idle
                 )
 
-//                button_cancel.onTouchChangeStyle(
-//                    this@BaseDialog.context,
-//                    R.color.color_white,
-//                    R.color.color_default_text,
-//                    R.drawable.bg_dialog_cancel_press,
-//                    R.drawable.bg_dialog_cancel_idle
-//                )
+                button_cancel.onTouchChangeStyle(
+                    this@BaseDialog.context,
+                    R.color.color_white,
+                    R.color.color_default_text,
+                    R.drawable.bg_dialog_cancel_press,
+                    R.drawable.bg_dialog_cancel_idle
+                )
             }
 
             button_optimistic.setOnClickListener {
@@ -50,9 +50,9 @@ abstract class BaseDialog(context: Context) : AppCompatDialog(context) {
                 dismiss()
             }
 
-//            button_cancel.setOnClickListener {
-//                dismiss()
-//            }
+            button_cancel.setOnClickListener {
+                dismiss()
+            }
 
             initView()
         } catch (e: Exception) {
