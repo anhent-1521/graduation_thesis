@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
 import android.os.Environment
+import android.view.View
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Image
@@ -13,6 +14,8 @@ import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import kotlinx.android.synthetic.main.fragment_image.*
 import kotlinx.android.synthetic.main.fragment_image.button_turn_on
+import kotlinx.android.synthetic.main.fragment_image.layout_remind_permission
+import kotlinx.android.synthetic.main.fragment_video.*
 
 class ImageFragment : BaseFragment(), ImageContract.View {
 
@@ -50,9 +53,13 @@ class ImageFragment : BaseFragment(), ImageContract.View {
 
 
     override fun showRemindPermission() {
+        layout_remind_permission.visibility = View.VISIBLE
+        recycler_images.visibility = View.GONE
     }
 
     override fun hideRemindPermission() {
+        layout_remind_permission.visibility = View.GONE
+        recycler_images.visibility = View.VISIBLE
     }
 
     private fun gotoDetailImage(pos: Int) {
