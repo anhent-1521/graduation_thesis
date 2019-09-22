@@ -1,5 +1,6 @@
 package com.example.tuananhe.myapplication.screen.detail_image
 
+import android.app.Activity
 import android.os.Environment
 import android.support.v4.view.ViewPager
 import android.view.View.VISIBLE
@@ -7,7 +8,7 @@ import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Image
 import com.example.tuananhe.myapplication.screen.image.ImageContract
-import com.example.tuananhe.myapplication.screen.image.ImageRetriever
+import com.example.tuananhe.myapplication.screen.image.ImagePresenter
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_detail_image.*
 
 class DetailImageActivity : BaseActivity(), ImageContract.View {
 
-    private var imageRetriever: ImageRetriever? = null
+    private var imageRetriever: ImagePresenter? = null
     private var images = ArrayList<Image>()
     private var position: Int = 0
 
@@ -47,7 +48,7 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
     }
 
     override fun initComponents() {
-        imageRetriever = ImageRetriever(this)
+        imageRetriever = ImagePresenter(this)
         imageRetriever?.loadImages(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + Constant.IMAGE_DIRECTORY)
     }
 
@@ -67,6 +68,17 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
 
     override fun onGetImageFail() {
 
+    }
+
+    override fun onGetImage() {
+    }
+
+    override fun getContext(): Activity? = this
+
+    override fun showRemindPermission() {
+    }
+
+    override fun hideRemindPermission() {
     }
 
     fun setControlVisible() {
@@ -90,7 +102,6 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
             constraint_bottom.showUp()
         }
     }
-
 
     private fun deleteImage(image: Image) {
         val dialog = CommonDialog(this, getString(R.string.dialog_delete_video_title))
