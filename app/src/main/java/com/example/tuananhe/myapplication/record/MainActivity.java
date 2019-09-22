@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.tuananhe.myapplication.R;
-import com.example.tuananhe.myapplication.screen.video.VideoRetriever;
+import com.example.tuananhe.myapplication.screen.video.VideoPresenter;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA};
 
     private RecordHelper recordHelper;
-    private VideoRetriever videoRetriever;
+    private VideoPresenter videoRetriever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         recordHelper = new RecordHelper(this);
-//        videoRetriever = new VideoRetriever();
+//        videoRetriever = new VideoPresenter();
 
         if (!hasPermission(permissions)) {
             requestPermission(permissions);
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
