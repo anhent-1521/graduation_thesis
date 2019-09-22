@@ -3,6 +3,7 @@ package com.example.tuananhe.myapplication.screen.image
 import android.net.Uri
 import android.provider.MediaStore
 import com.example.tuananhe.myapplication.data.model.Image
+import com.example.tuananhe.myapplication.utils.AppUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,7 +12,7 @@ import java.io.File
 import java.io.FileFilter
 
 
-class ImageRetriever(private var view: ImageContract.View) : ImageContract.Presenter {
+class ImagePresenter(private var view: ImageContract.View) : ImageContract.Presenter {
 
     private val fileFilter = FileFilter { file ->
         file.name.toLowerCase().endsWith("png") or file.name.toLowerCase().endsWith("jpeg")
@@ -21,7 +22,7 @@ class ImageRetriever(private var view: ImageContract.View) : ImageContract.Prese
         try {
             val outputFile = File(directory)
             val files: Array<File> =
-                outputFile.listFiles() //crash nếu không xin quyền trước
+                    outputFile.listFiles() //crash nếu không xin quyền trước
 
             var images: ArrayList<Image>
             CoroutineScope(Dispatchers.IO).launch {
@@ -36,12 +37,26 @@ class ImageRetriever(private var view: ImageContract.View) : ImageContract.Prese
         }
     }
 
+    override fun checkPermission(permissions: Array<String>) {
+        view.getContext()?.let {
+            if (AppUtil.hasPermission(it, permissions)) {
+                view.hideRemindPermission()
+                view.onGetImage()
+                return
+            }
+            view.showRemindPermission()
+        }
+    }
+
+    override fun requestPermission(permissions: Array<String>, requestCode: Int) {
+    }
+
     private fun extractImages(files: Array<File>): ArrayList<Image> {
         val images = ArrayList<Image>()
         try {
             for (file in files) {
                 val bitmap =
-                    MediaStore.Images.Media.getBitmap(view.getContentResolver(), Uri.fromFile(file))
+                        MediaStore.Images.Media.getBitmap(view.getContext()?.contentResolver, Uri.fromFile(file))
                 val width = bitmap.width
                 val height = bitmap.height
 
