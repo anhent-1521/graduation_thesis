@@ -97,16 +97,16 @@ class DetailVideoActivity : BaseActivity() {
 
         image_back.setOnClickListener { onBackPressed() }
         image_share.setOnClickListener {
-            player?.let {
-                if (player?.isPlaying as Boolean) {
+            player?.let { player ->
+                if (player.isPlaying) {
                     onPlayPauseClicked()
                 }
             }
             openShare()
         }
         image_delete.setOnClickListener {
-            player?.let {
-                if (player?.isPlaying as Boolean) {
+            player?.let { player ->
+                if (player.isPlaying) {
                     onPlayPauseClicked()
                 }
             }
@@ -136,7 +136,7 @@ class DetailVideoActivity : BaseActivity() {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
             val marginParam = linear_progress.layoutParams as ViewGroup.MarginLayoutParams
             marginParam.bottomMargin =
-                resources.getDimensionPixelOffset(R.dimen.seek_bar_padding_bottom)
+                    resources.getDimensionPixelOffset(R.dimen.seek_bar_padding_bottom)
         }
     }
 
@@ -146,7 +146,7 @@ class DetailVideoActivity : BaseActivity() {
 
     private fun deleteVideo(video: Video?) {
         val dialog = CommonDialog(
-            this, getString(R.string.dialog_delete_video_title)
+                this, getString(R.string.dialog_delete_video_title)
         )
         dialog.optimisticListener = {
             FileUtil.deleteFile(video?.path)
@@ -212,16 +212,16 @@ class DetailVideoActivity : BaseActivity() {
     }
 
     private fun resumeAndPauseVideo() {
-        player?.let {
-            if (player?.isPlaying as Boolean) {
-                player?.pause()
+        player?.let { player ->
+            if (player.isPlaying) {
+                player.pause()
                 progressHandler.removeCallbacks(progressRunnable)
                 controlHandler.removeCallbacks(controlRunnable)
                 image_play_pause.setBackgroundResource(R.drawable.bg_play)
             } else {
                 progressHandler.post(progressRunnable)
                 controlHandler.postDelayed(controlRunnable, CONTROL_DELAY)
-                player?.start()
+                player.start()
                 image_play_pause.setBackgroundResource(R.drawable.bg_pause)
             }
         }
@@ -241,7 +241,7 @@ class DetailVideoActivity : BaseActivity() {
             fadeInControl()
             controlHandler.removeCallbacks(controlRunnable)
             video_view.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         } else {
             fadeOutControl()
             controlHandler.postDelayed(controlRunnable, CONTROL_DELAY)

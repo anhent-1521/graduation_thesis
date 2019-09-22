@@ -21,28 +21,15 @@ abstract class BaseDialog(context: Context) : AppCompatDialog(context) {
         setCancelable(false)
         try {
             window?.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
             )
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             window?.attributes?.windowAnimations = R.style.CommonDialogAnimation
 
             with(ExtensionUtil()) {
-                button_optimistic.onTouchChangeStyle(
-                    this@BaseDialog.context,
-                    R.color.color_white,
-                    R.color.colorPrimary,
-                    R.drawable.bg_dialog_optimistic_press,
-                    R.drawable.bg_dialog_optimistic_idle
-                )
-
-                button_cancel.onTouchChangeStyle(
-                    this@BaseDialog.context,
-                    R.color.color_white,
-                    R.color.color_default_text,
-                    R.drawable.bg_dialog_cancel_press,
-                    R.drawable.bg_dialog_cancel_idle
-                )
+                button_optimistic.changePrimaryStyle(this@BaseDialog.context)
+                button_cancel.changeDarkerStyle(this@BaseDialog.context)
             }
 
             button_optimistic.setOnClickListener {
@@ -63,7 +50,7 @@ abstract class BaseDialog(context: Context) : AppCompatDialog(context) {
 
     abstract fun getLayoutResId(): Int
 
-    abstract fun initView()
+    open fun initView() {}
 
     abstract fun onOptimisticClick()
 }
