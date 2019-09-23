@@ -1,6 +1,9 @@
 package com.example.tuananhe.myapplication.screen.main
 
 import android.Manifest.permission.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -48,6 +51,15 @@ class HomeActivity : BaseActivity(), HomeContract.View {
     }
 
     override fun initComponents() {
+        // create default notification channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = getString(R.string.default_floatingview_channel_id)
+            val channelName = getString(R.string.default_floatingview_channel_name)
+            val defaultChannel =
+                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_MIN)
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(defaultChannel)
+        }
         presenter.checkRequiredPermission(permissions, COMMON_PERMISSION)
     }
 
@@ -60,6 +72,7 @@ class HomeActivity : BaseActivity(), HomeContract.View {
     }
 
     override fun startBubbleView() {
+        presenter.startBubble(this)
     }
 
     override fun showOverlaySetting() {

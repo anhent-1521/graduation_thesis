@@ -1,5 +1,6 @@
 package com.example.tuananhe.myapplication.screen.main
 
+import android.app.Activity
 import android.content.Context
 
 interface HomeContract {
@@ -21,5 +22,7 @@ interface HomeContract {
 
         fun checkOverlayPermission()
 
-    }
+        fun startBubble(activity: Activity)
+
+   }
 }
