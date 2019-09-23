@@ -552,6 +552,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         mWindowManager.addView(mTrashView, mTrashView.getWindowLayoutParams());
     }
 
+
     /**
      * ViewをWindowから取り外します。
      *
