@@ -35,6 +35,12 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+
+import com.example.tuananhe.myapplication.R;
+import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionButton;
+import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionMenu;
+import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.SubActionButton;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -513,7 +519,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
      * @param view    フローティングさせるView
      * @param options Options
      */
-    public FloatingView addViewToWindow(View view, Options options) {
+    public FloatingActionMenu addViewToWindow(View view, Options options) {
         final boolean isFirstAttach = mFloatingViewList.isEmpty();
         // FloatingView
         final FloatingView floatingView = new FloatingView(mContext);
@@ -551,7 +557,42 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         // 必ずトップに来て欲しいので毎回貼り付け
         mWindowManager.addView(mTrashView, mTrashView.getWindowLayoutParams());
 
-        return floatingView;
+        FloatingActionMenu f = createMenu(mContext, floatingView);
+
+        return f;
+    }
+
+    private FloatingActionMenu createMenu(Context context, View view) {
+
+        int size = context.getResources().getDimensionPixelSize(R.dimen.action_menu_size);
+
+        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(context);
+
+        ImageView item1 = new ImageView(context);
+        item1.setImageResource(R.drawable.ic_rec);
+        SubActionButton button1 = itemBuilder.setContentView(item1).build();
+
+        ImageView  item2 = new ImageView(context);
+        item2.setImageResource(R.drawable.ic_home);
+        SubActionButton button2 = itemBuilder.setContentView(item2).build();
+
+        ImageView  item3 = new ImageView(context);
+        item3.setImageResource(R.drawable.ic_screenshot);
+        SubActionButton button3 = itemBuilder.setContentView(item3).build();
+
+        ImageView  item4 = new ImageView(context);
+        item4.setImageResource(R.drawable.ic_settings);
+        SubActionButton button4 = itemBuilder.setContentView(item4).build();
+
+        return new FloatingActionMenu.Builder(context)
+                .addSubActionView(button1, size, size)
+                .addSubActionView(button2, size, size)
+                .addSubActionView(button3, size, size)
+                .addSubActionView(button4, size, size)
+                .attachTo(view)
+                .setRadius(170)
+                .setSystemOverlay(true)
+                .build();
     }
 
 
