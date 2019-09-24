@@ -2,7 +2,6 @@ package com.example.tuananhe.myapplication.screen.image
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Intent
 import android.os.Environment
 import android.view.View
@@ -15,7 +14,6 @@ import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import kotlinx.android.synthetic.main.fragment_image.*
 import kotlinx.android.synthetic.main.fragment_image.button_turn_on
 import kotlinx.android.synthetic.main.fragment_image.layout_remind_permission
-import kotlinx.android.synthetic.main.fragment_video.*
 
 class ImageFragment : BaseFragment(), ImageContract.View {
 

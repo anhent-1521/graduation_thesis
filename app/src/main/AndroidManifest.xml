@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <supports-screens
         android:largeScreens="true"
@@ -53,6 +54,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
+        <service
+            android:name=".service.BubbleService"
+            android:exported="false" />
+
     </application>
 
 </manifest>
