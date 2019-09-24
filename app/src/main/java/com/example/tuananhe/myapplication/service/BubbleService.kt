@@ -15,14 +15,13 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionButton
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionMenu
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.SubActionButton
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewListener
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewManager
-
-
 
 
 /**
@@ -54,31 +53,39 @@ class BubbleService : Service(), FloatingViewListener {
         windowManager.defaultDisplay.getSize(screenPoint)
 
         val inflater = LayoutInflater.from(this)
-        val iconView = inflater.inflate(R.layout.widget_chathead, null, false) as FrameLayout
+        val iconView = inflater.inflate(R.layout.widget_chathead, null, false) as ImageView
 
         mFloatingViewManager = FloatingViewManager(this, this)
         mFloatingViewManager!!.setFixedTrashIconImage(R.drawable.ic_trash_fixed)
         mFloatingViewManager!!.setActionTrashIconImage(R.drawable.ic_trash_action)
         mFloatingViewManager!!.setSafeInsetRect(
-            intent.getParcelableExtra<Parcelable>(
-                EXTRA_CUTOUT_SAFE_AREA
-            ) as Rect
+                intent.getParcelableExtra<Parcelable>(
+                        EXTRA_CUTOUT_SAFE_AREA
+                ) as Rect
         )
         val options = FloatingViewManager.Options()
         options.overMargin = (16 * metrics.density).toInt()
-        val bubbleView = mFloatingViewManager!!.addViewToWindow(iconView, options)
+        val bubble = mFloatingViewManager!!.addViewToWindow(iconView, options)
         iconView.setOnClickListener {
+
             val frame: FrameLayout = iconView.parent as FrameLayout
             val param: WindowManager.LayoutParams = frame.layoutParams as WindowManager.LayoutParams
             if ((screenPoint.y - param.y) < frame.height * 2) {
                 param.y = screenPoint.y - frame.height
             }
-            if (param.y >= screenPoint.y - frame.height / 10) {
+            if (param.y >= screenPoint.y - frame.height) {
                 param.y = screenPoint.y - frame.height
             }
             windowManager.updateViewLayout(frame, param)
+
+            if (bubble.isOpen) {
+                bubble.close(true)
+            } else {
+                bubble.open(true)
+            }
+
         }
-        createMenu(bubbleView)
+        windowManager.
 
         // 常駐起動
         startForeground(NOTIFICATION_ID, createNotification(this))
@@ -86,33 +93,8 @@ class BubbleService : Service(), FloatingViewListener {
         return START_REDELIVER_INTENT
     }
 
-    private fun createMenu(view: View) {
+    lateinit var overlay : LinearLayout
 
-        val itemBuilder = SubActionButton.Builder(baseContext)
-        val item1 = ImageView(this)
-        item1.setImageResource(R.drawable.ic_rec)
-        val button1 = itemBuilder.setContentView(item1).build()
-
-        val item2 = ImageView(this)
-        item2.setImageResource(R.drawable.ic_home)
-        val button2 = itemBuilder.setContentView(item2).build()
-
-        val item3 = ImageView(this)
-        item3.setImageResource(R.drawable.ic_screenshot)
-        val button3 = itemBuilder.setContentView(item3).build()
-
-        val item4 = ImageView(this)
-        item4.setImageResource(R.drawable.ic_settings)
-        val button4 = itemBuilder.setContentView(item4).build()
-
-        val actionMenu = FloatingActionMenu.Builder(this)
-            .addSubActionView(button1)
-            .addSubActionView(button2)
-            .addSubActionView(button3)
-            .addSubActionView(button4)
-            .attachTo(view)
-            .build()
-    }
 
     /**
      * {@inheritDoc}
@@ -176,8 +158,8 @@ class BubbleService : Service(), FloatingViewListener {
          */
         private fun createNotification(context: Context): Notification {
             val builder = NotificationCompat.Builder(
-                context,
-                context.getString(R.string.default_floatingview_channel_id)
+                    context,
+                    context.getString(R.string.default_floatingview_channel_id)
             )
             builder.setWhen(System.currentTimeMillis())
             builder.setSmallIcon(R.mipmap.ic_launcher)
