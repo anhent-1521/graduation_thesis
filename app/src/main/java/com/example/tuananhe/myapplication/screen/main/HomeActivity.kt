@@ -120,7 +120,7 @@ class HomeActivity : BaseActivity(), HomeContract.View {
                 }
                 //Check if the permission is granted or not.
                 if (Settings.canDrawOverlays(this)) {
-
+                    presenter.startBubble(this)
                 } else {
                     //Permission is not granted
                     showOverlayDialog()

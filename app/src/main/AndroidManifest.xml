@@ -55,8 +55,9 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
         <service
-            android:name=".service.ChatHeadService"
+            android:name=".service.BubbleService"
             android:exported="false" />
+
     </application>
 
 </manifest>

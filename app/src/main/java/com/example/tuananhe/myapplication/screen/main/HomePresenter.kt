@@ -8,7 +8,7 @@ import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.view.WindowManager
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewManager
-import com.example.tuananhe.myapplication.service.ChatHeadService
+import com.example.tuananhe.myapplication.service.BubbleService
 import com.example.tuananhe.myapplication.utils.AppUtil
 
 class HomePresenter(private val view: HomeContract.View) : HomeContract.Presenter {
@@ -43,8 +43,8 @@ class HomePresenter(private val view: HomeContract.View) : HomeContract.Presente
             }
         }
 
-        val key: String = ChatHeadService.EXTRA_CUTOUT_SAFE_AREA
-        val intent = Intent(activity, ChatHeadService::class.java)
+        val key: String = BubbleService.EXTRA_CUTOUT_SAFE_AREA
+        val intent = Intent(activity, BubbleService::class.java)
         intent.putExtra(key, FloatingViewManager.findCutoutSafeArea(activity))
         ContextCompat.startForegroundService(activity, intent)
     }
