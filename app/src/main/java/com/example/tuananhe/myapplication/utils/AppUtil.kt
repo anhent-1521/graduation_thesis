@@ -3,6 +3,7 @@ package com.example.tuananhe.myapplication.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -12,6 +13,7 @@ import android.support.v4.content.res.ResourcesCompat
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import com.example.tuananhe.myapplication.screen.main.HomeActivity
 
 
 class AppUtil {
@@ -52,5 +54,12 @@ class AppUtil {
             )
             context.startActivity(intent)
         }
+
+        fun startHome(context: Context) {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.flags = FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+        }
+
     }
 }

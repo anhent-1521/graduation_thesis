@@ -4,22 +4,25 @@ import android.app.Notification
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.Rect
+import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
 import android.support.v4.app.NotificationCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import com.example.tuananhe.myapplication.R
-import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionButton
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionMenu
-import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.SubActionButton
+import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingView
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewListener
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewManager
 
@@ -27,7 +30,7 @@ import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingV
 /**
  * ChatHead Service
  */
-class BubbleService : Service(), FloatingViewListener {
+class BubbleService : Service(), FloatingViewListener, FloatingActionMenu.MenuStateChangeListener {
 
     /**
      * FloatingViewManager
@@ -36,7 +39,8 @@ class BubbleService : Service(), FloatingViewListener {
 
     var screenPoint: Point = Point()
 
-    lateinit var windowManager: WindowManager
+    private lateinit var windowManager: WindowManager
+
 
     /**
      * {@inheritDoc}
@@ -54,6 +58,7 @@ class BubbleService : Service(), FloatingViewListener {
 
         val inflater = LayoutInflater.from(this)
         val iconView = inflater.inflate(R.layout.widget_chathead, null, false) as ImageView
+        initFrameOverLay()
 
         mFloatingViewManager = FloatingViewManager(this, this)
         mFloatingViewManager!!.setFixedTrashIconImage(R.drawable.ic_trash_fixed)
@@ -65,36 +70,79 @@ class BubbleService : Service(), FloatingViewListener {
         )
         val options = FloatingViewManager.Options()
         options.overMargin = (16 * metrics.density).toInt()
+        options.floatingViewY = screenPoint.y / 2
         val bubble = mFloatingViewManager!!.addViewToWindow(iconView, options)
+        bubble.setScreenPoint(screenPoint)
+        bubble.setStateChangeListener(this)
+        val almostHalfMenuSize = bubble.subActionItems[0].height * 2 + 15
         iconView.setOnClickListener {
 
             val frame: FrameLayout = iconView.parent as FrameLayout
             val param: WindowManager.LayoutParams = frame.layoutParams as WindowManager.LayoutParams
-            if ((screenPoint.y - param.y) < frame.height * 2) {
-                param.y = screenPoint.y - frame.height
+            val jumpSize = almostHalfMenuSize + frame.height / 2
+
+            if (param.y > screenPoint.y - jumpSize) {
+                param.y = screenPoint.y - jumpSize
             }
-            if (param.y >= screenPoint.y - frame.height) {
-                param.y = screenPoint.y - frame.height
+            if (param.y < jumpSize) {
+                param.y = jumpSize
             }
             windowManager.updateViewLayout(frame, param)
 
-            if (bubble.isOpen) {
-                bubble.close(true)
+            val windowParam: WindowManager.LayoutParams =
+                    (iconView.parent as FloatingView).windowLayoutParams
+
+            if (windowParam.x <= 0) {
+                bubble.setStartAngle(-70)
+                bubble.setEndAngle(70)
             } else {
-                bubble.open(true)
+                bubble.setStartAngle(110)
+                bubble.setEndAngle(250)
             }
-
+            bubble.toggle(true)
         }
-        windowManager.
-
         // 常駐起動
         startForeground(NOTIFICATION_ID, createNotification(this))
 
         return START_REDELIVER_INTENT
     }
 
-    lateinit var overlay : LinearLayout
+    private var frameOverlay: FrameLayout? = null
+    private var overlayParam: WindowManager.LayoutParams? = null
 
+    private fun initFrameOverLay() {
+        frameOverlay = FrameLayout(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            overlayParam = WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT)
+        } else {
+            overlayParam = WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT)
+        }
+        windowManager.addView(frameOverlay, overlayParam)
+        frameOverlay?.visibility = View.GONE
+        frameOverlay?.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.color_overlay, theme))
+        windowManager.updateViewLayout(frameOverlay, overlayParam)
+    }
+
+    override fun onMenuOpened(menu: FloatingActionMenu?) {
+        frameOverlay?.visibility = View.VISIBLE
+        windowManager.updateViewLayout(frameOverlay, overlayParam)
+    }
+
+    override fun onMenuClosed(menu: FloatingActionMenu?) {
+        frameOverlay?.visibility = View.GONE
+        windowManager.updateViewLayout(frameOverlay, overlayParam)
+    }
 
     /**
      * {@inheritDoc}

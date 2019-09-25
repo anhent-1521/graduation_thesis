@@ -5,6 +5,7 @@ package com.example.tuananhe.myapplication.floating_bubble.circularfloatingactio
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PixelFormat;
@@ -78,7 +79,7 @@ public class FloatingActionMenu {
     /**
      * a simple layout to contain all the sub action views in the system overlay mode
      */
-    private FrameLayout overlayContainer;
+    public FrameLayout overlayContainer;
 
     private OrientationEventListener orientationListener;
 
@@ -219,22 +220,22 @@ public class FloatingActionMenu {
             // Tell the current MenuAnimationHandler to animate from the center
             animationHandler.animateMenuOpening(center);
         } else {
-            // If animations are disabled, just place each of the items to their calculated destination positions.
-            for (int i = 0; i < subActionItems.size(); i++) {
-                // This is currently done by giving them large margins
-
-                final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(subActionItems.get(i).width, subActionItems.get(i).height, Gravity.TOP | Gravity.LEFT);
-                if (systemOverlay) {
-                    params.setMargins(subActionItems.get(i).x - overlayParams.x, subActionItems.get(i).y - overlayParams.y, 0, 0);
-                    subActionItems.get(i).view.setLayoutParams(params);
-                } else {
-                    params.setMargins(subActionItems.get(i).x, subActionItems.get(i).y, 0, 0);
-                    subActionItems.get(i).view.setLayoutParams(params);
-                    // Because they are placed into the main content view of the Activity,
-                    // which is itself a FrameLayout
-                }
-                addViewToCurrentContainer(subActionItems.get(i).view, params);
-            }
+//            // If animations are disabled, just place each of the items to their calculated destination positions.
+//            for (int i = 0; i < subActionItems.size(); i++) {
+//                // This is currently done by giving them large margins
+//
+//                final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(subActionItems.get(i).width, subActionItems.get(i).height, Gravity.TOP | Gravity.LEFT);
+//                if (systemOverlay) {
+//                    params.setMargins(subActionItems.get(i).x - overlayParams.x, subActionItems.get(i).y - overlayParams.y, 0, 0);
+//                    subActionItems.get(i).view.setLayoutParams(params);
+//                } else {
+//                    params.setMargins(subActionItems.get(i).x, subActionItems.get(i).y, 0, 0);
+//                    subActionItems.get(i).view.setLayoutParams(params);
+//                    // Because they are placed into the main content view of the Activity,
+//                    // which is itself a FrameLayout
+//                }
+//                addViewToCurrentContainer(subActionItems.get(i).view, params);
+//            }
         }
         // do not forget to specify that the menu is open.
         open = true;
@@ -333,18 +334,9 @@ public class FloatingActionMenu {
      */
     private Point getActionViewCoordinates() {
         int[] coords = new int[2];
-        // This method returns a x and y values that can be larger than the dimensions of the device screen.
-        mainActionView.getLocationOnScreen(coords);
-
-        // So, we need to deduce the offsets.
-        if (systemOverlay) {
-            coords[1] -= getStatusBarHeight();
-        } else {
-            Rect activityFrame = new Rect();
-            getActivityContentView().getWindowVisibleDisplayFrame(activityFrame);
-            coords[0] -= (getScreenSize().x - getActivityContentView().getMeasuredWidth());
-            coords[1] -= (activityFrame.height() + activityFrame.top - getActivityContentView().getMeasuredHeight());
-        }
+        WindowManager.LayoutParams param = ((WindowManager.LayoutParams) mainActionView.getLayoutParams());
+        coords[0] = param.x;
+        coords[1] = screenPoint.y - param.y - mainActionView.getWidth() / 2;
         return new Point(coords[0], coords[1]);
     }
 
@@ -355,7 +347,11 @@ public class FloatingActionMenu {
      */
     public Point getActionViewCenter() {
         Point point = getActionViewCoordinates();
-        point.x += mainActionView.getMeasuredWidth() / 2;
+        if (point.x > 0) {
+            point.x += mainActionView.getMeasuredWidth() / 2 - 30;
+        } else {
+            point.x += mainActionView.getMeasuredWidth() / 2 + 30;
+        }
         point.y += mainActionView.getMeasuredHeight() / 2;
         return point;
     }
@@ -365,7 +361,7 @@ public class FloatingActionMenu {
      *
      * @return getActionViewCenter()
      */
-    private Point calculateItemPositions() {
+    public Point calculateItemPositions() {
         // Create an arc that starts from startAngle and ends at endAngle
         // in an area that is as large as 4*radius^2
         final Point center = getActionViewCenter();
@@ -771,4 +767,17 @@ public class FloatingActionMenu {
         return params;
     }
 
+    public void setStartAngle(int startAngle) {
+        this.startAngle = startAngle;
+    }
+
+    public void setEndAngle(int endAngle) {
+        this.endAngle = endAngle;
+    }
+
+    private Point screenPoint;
+
+    public void setScreenPoint(Point screenPoint) {
+        this.screenPoint = screenPoint;
+    }
 }

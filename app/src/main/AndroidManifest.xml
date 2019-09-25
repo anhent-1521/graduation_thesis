@@ -30,6 +30,7 @@
         <activity
             android:name=".screen.main.HomeActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
