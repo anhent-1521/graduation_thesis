@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.provider.Settings
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -14,6 +15,8 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.example.tuananhe.myapplication.screen.main.HomeActivity
+import com.example.tuananhe.myapplication.screen.transparent.TransparentActivity
+import com.example.tuananhe.myapplication.service.record.RecordService
 
 
 class AppUtil {
@@ -59,6 +62,32 @@ class AppUtil {
             val intent = Intent(context, HomeActivity::class.java)
             intent.flags = FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
+        }
+
+        fun startTransparentRecord(context: Context, action: String) {
+            val intent = Intent(context, TransparentActivity::class.java)
+            intent.flags = FLAG_ACTIVITY_NEW_TASK
+            intent.action = action
+            context.startActivity(intent)
+        }
+
+        fun pauseRecord(context: Context, action: String) {
+            val intent = Intent(context, RecordService::class.java)
+            intent.action = action
+            context.startService(intent)
+        }
+
+        fun stopRecord(context: Context, action: String) {
+            val intent = Intent(context, RecordService::class.java)
+            intent.action = action
+            context.startService(intent)
+        }
+
+        /**
+         * Show touch setting
+         */
+        fun showTouches(context: Context, setting: Int) {
+            Settings.System.putInt(context.contentResolver, "show_touches", setting)
         }
 
     }

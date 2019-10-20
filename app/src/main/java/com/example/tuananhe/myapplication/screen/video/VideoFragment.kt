@@ -8,8 +8,10 @@ import android.view.View.VISIBLE
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
+import com.example.tuananhe.myapplication.evenBus.Event
 import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
 import com.example.tuananhe.myapplication.utils.AppUtil
+import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.Constant.Companion.COMMON_PERMISSION
 import com.example.tuananhe.myapplication.utils.Constant.Companion.VIDEO_FOLDER
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
@@ -17,6 +19,9 @@ import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.EditNameDialog
 import kotlinx.android.synthetic.main.fragment_video.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class VideoFragment : BaseFragment(), VideoContract.View {
 
@@ -106,12 +111,24 @@ class VideoFragment : BaseFragment(), VideoContract.View {
 
     override fun onResume() {
         super.onResume()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun getData() {
         presenter.checkPermission(permissions)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public fun onMessageEvent(event: Event) {
+        if (event.action == Constant.STOP_RECORD) {
+            onGetVideo()
+        }
     }
 
     override fun onPause() {
         super.onPause()
         lastListPosition = (recycler_videos.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+        EventBus.getDefault().unregister(this)
     }
 
     private fun setupAdapter(videos: ArrayList<Video>) {

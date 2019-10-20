@@ -8,6 +8,7 @@ import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.os.Parcelable
 import android.support.v4.app.NotificationCompat
@@ -21,10 +22,14 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.example.tuananhe.myapplication.R
+import com.example.tuananhe.myapplication.evenBus.Event
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionMenu
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingView
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewListener
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewManager
+import com.example.tuananhe.myapplication.utils.Constant
+import com.example.tuananhe.myapplication.utils.MediaUtil
+import org.greenrobot.eventbus.EventBus
 
 
 /**
@@ -57,7 +62,7 @@ class BubbleService : Service(), FloatingViewListener, FloatingActionMenu.MenuSt
         windowManager.defaultDisplay.getSize(screenPoint)
 
         val inflater = LayoutInflater.from(this)
-        val iconView = inflater.inflate(R.layout.widget_chathead, null, false) as ImageView
+        val iconView = inflater.inflate(R.layout.widget_chathead, null, false) as FrameLayout
         initFrameOverLay()
 
         mFloatingViewManager = FloatingViewManager(this, this)
@@ -71,12 +76,12 @@ class BubbleService : Service(), FloatingViewListener, FloatingActionMenu.MenuSt
         val options = FloatingViewManager.Options()
         options.overMargin = (16 * metrics.density).toInt()
         options.floatingViewY = screenPoint.y / 2
-        val bubble = mFloatingViewManager!!.addViewToWindow(iconView, options)
+        bubble = mFloatingViewManager!!.addViewToWindow(iconView, options)
         bubble.setScreenPoint(screenPoint)
         bubble.setStateChangeListener(this)
         val almostHalfMenuSize = bubble.subActionItems[0].height * 2 + 15
+        mFloatingViewManager!!.waitForClose()
         iconView.setOnClickListener {
-
             val frame: FrameLayout = iconView.parent as FrameLayout
             val param: WindowManager.LayoutParams = frame.layoutParams as WindowManager.LayoutParams
             val jumpSize = almostHalfMenuSize + frame.height / 2
@@ -99,6 +104,9 @@ class BubbleService : Service(), FloatingViewListener, FloatingActionMenu.MenuSt
                 bubble.setStartAngle(110)
                 bubble.setEndAngle(250)
             }
+            mFloatingViewManager?.showFloatingView()
+            mFloatingViewManager?.removeFrog()
+            mFloatingViewManager?.waitForClose()
             bubble.toggle(true)
         }
         // 常駐起動
@@ -108,6 +116,7 @@ class BubbleService : Service(), FloatingViewListener, FloatingActionMenu.MenuSt
     }
 
     private var frameOverlay: FrameLayout? = null
+    private lateinit var bubble: FloatingActionMenu
     private var overlayParam: WindowManager.LayoutParams? = null
 
     private fun initFrameOverLay() {

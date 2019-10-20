@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
 
     <supports-screens
         android:largeScreens="true"
@@ -46,6 +48,9 @@
             android:name=".screen.detail_video.DetailVideoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/DetailImageTheme" />
+        <activity android:name=".screen.transparent.TransparentActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/Transparent"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -59,6 +64,8 @@
         <service
             android:name=".service.BubbleService"
             android:exported="false" />
+        <service android:name=".service.record.RecordService"
+            android:exported="false"/>
 
     </application>
 

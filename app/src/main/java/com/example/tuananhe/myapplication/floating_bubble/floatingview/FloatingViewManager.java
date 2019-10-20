@@ -24,6 +24,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -38,12 +39,19 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.tuananhe.myapplication.R;
+import com.example.tuananhe.myapplication.evenBus.Event;
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionButton;
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionMenu;
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.SubActionButton;
 import com.example.tuananhe.myapplication.utils.AppUtil;
+import com.example.tuananhe.myapplication.utils.Constant;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -221,6 +229,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         mFloatingViewList = new ArrayList<>();
         mFullscreenObserverView = new FullscreenObserverView(context, this);
         mTrashView = new TrashView(context);
+        EventBus.getDefault().register(this);
     }
 
     /**
@@ -345,7 +354,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
+        showFloatingView();
         if (mFloatingActionMenu != null && mFloatingActionMenu.isOpen()) {
             mFloatingActionMenu.close(true);
         }
@@ -389,11 +398,13 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         }
         // 押上、キャンセル
         else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            waitForClose();
             // 重なっている場合
             if (state == FloatingView.STATE_INTERSECTING) {
                 // FloatingViewを削除し、拡大状態を解除
                 mTargetFloatingView.setFinishing();
                 mTrashView.setScaleTrashIcon(false);
+                removeFrog();
             }
             mIsMoveAccept = false;
 
@@ -564,9 +575,30 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         }
         // 必ずトップに来て欲しいので毎回貼り付け
         mWindowManager.addView(mTrashView, mTrashView.getWindowLayoutParams());
+        textTime = mTargetFloatingView.findViewById(R.id.text_time);
 
         return mFloatingActionMenu = createMenu(mContext, floatingView);
     }
+
+    private Handler clickHandler = new Handler();
+    private Runnable clickRunnable = new Runnable() {
+        @Override
+        public void run() {
+            frogFloatingView();
+            if (mFloatingActionMenu != null && mFloatingActionMenu.isOpen())
+                mFloatingActionMenu.close(true);
+        }
+    };
+
+    public void waitForClose() {
+        clickHandler.postDelayed(clickRunnable, 4000);
+    }
+
+    public void removeFrog() {
+        clickHandler.removeCallbacks(clickRunnable);
+    }
+
+    private TextView textTime;
 
     private FloatingActionMenu mFloatingActionMenu;
 
@@ -587,15 +619,35 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
 
         item3.setImageResource(R.drawable.ic_screenshot);
         SubActionButton button3 = itemBuilder.setContentView(item3).build();
+        item3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppUtil.Companion.pauseRecord(context, Constant.PAUSE_RECORD);
+            }
+        });
 
         ImageView item4 = new ImageView(context);
         item4.setImageResource(R.drawable.ic_settings);
         SubActionButton button4 = itemBuilder.setContentView(item4).build();
 
+        item1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recordState != Constant.RECORD_STATE_STARTED) {
+                    Log.d("-----", "onClick: start");
+                    AppUtil.Companion.startTransparentRecord(context, Constant.START_RECORD);
+                } else {
+                    Log.d("-----", "onClick: stop");
+                    AppUtil.Companion.stopRecord(context, Constant.STOP_RECORD);
+                }
+                mFloatingActionMenu.toggle(true);
+            }
+        });
         item2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppUtil.Companion.startHome(context);
+                mFloatingActionMenu.toggle(true);
             }
         });
 
@@ -610,6 +662,53 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
                 .setStateChangeListener(listener)
                 .build();
     }
+
+    public void hideFloatingView() {
+        WindowManager.LayoutParams params = mTargetFloatingView.getWindowLayoutParams();
+        params.alpha = 0;
+        mWindowManager.updateViewLayout(mTargetFloatingView, params);
+    }
+
+    public void showFloatingView() {
+        WindowManager.LayoutParams params = mTargetFloatingView.getWindowLayoutParams();
+        params.alpha = 1f;
+        mWindowManager.updateViewLayout(mTargetFloatingView, params);
+    }
+
+    public void frogFloatingView() {
+        WindowManager.LayoutParams params = mTargetFloatingView.getWindowLayoutParams();
+        params.alpha = 0.5f;
+        mWindowManager.updateViewLayout(mTargetFloatingView, params);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Event event) {
+        if (event.getAction() == null) return;
+        switch (event.getAction()) {
+            case Constant.START_RECORD:
+                frogFloatingView();
+                textTime.setVisibility(View.VISIBLE);
+                recordState = Constant.RECORD_STATE_STARTED;
+                ImageView record = (ImageView) mFloatingActionMenu.getSubActionItems().get(0).view;
+                record.setImageResource(R.drawable.ic_pause_record);
+                mFloatingActionMenu.updateItemPositions();
+                break;
+            case Constant.RECORDING:
+                textTime.setText(event.getMessage());
+                break;
+            case Constant.STOP_RECORD:
+                textTime.setVisibility(View.GONE);
+                recordState = Constant.RECORD_STATE_STOPPED;
+                ImageView pause = (ImageView) mFloatingActionMenu.getSubActionItems().get(0).view;
+                pause.setImageResource(R.drawable.ic_rec);
+                mFloatingActionMenu.updateItemPositions();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private int recordState = -1;
 
     private FloatingActionMenu.MenuStateChangeListener listener;
 
@@ -653,6 +752,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
             removeViewImmediate(floatingView);
         }
         mFloatingViewList.clear();
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -698,74 +798,74 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         return safeInsetRect;
     }
 
+/**
+ * FloatingViewを貼り付ける際のオプションを表すクラスです。
+ */
+public static class Options {
+
     /**
-     * FloatingViewを貼り付ける際のオプションを表すクラスです。
+     * フローティングさせるViewの矩形（SHAPE_RECTANGLE or SHAPE_CIRCLE）
      */
-    public static class Options {
+    public float shape;
 
-        /**
-         * フローティングさせるViewの矩形（SHAPE_RECTANGLE or SHAPE_CIRCLE）
-         */
-        public float shape;
+    /**
+     * 画面外のはみ出しマージン(px)
+     */
+    public int overMargin;
 
-        /**
-         * 画面外のはみ出しマージン(px)
-         */
-        public int overMargin;
+    /**
+     * 画面左下を原点とするFloatingViewのX座標
+     */
+    public int floatingViewX;
 
-        /**
-         * 画面左下を原点とするFloatingViewのX座標
-         */
-        public int floatingViewX;
+    /**
+     * 画面左下を原点とするFloatingViewのY座標
+     */
+    public int floatingViewY;
 
-        /**
-         * 画面左下を原点とするFloatingViewのY座標
-         */
-        public int floatingViewY;
+    /**
+     * Width of FloatingView(px)
+     */
+    public int floatingViewWidth;
 
-        /**
-         * Width of FloatingView(px)
-         */
-        public int floatingViewWidth;
+    /**
+     * Height of FloatingView(px)
+     */
+    public int floatingViewHeight;
 
-        /**
-         * Height of FloatingView(px)
-         */
-        public int floatingViewHeight;
+    /**
+     * FloatingViewが吸着する方向
+     * ※座標を指定すると自動的にMOVE_DIRECTION_NONEになります
+     */
+    @MoveDirection
+    public int moveDirection;
 
-        /**
-         * FloatingViewが吸着する方向
-         * ※座標を指定すると自動的にMOVE_DIRECTION_NONEになります
-         */
-        @MoveDirection
-        public int moveDirection;
+    /**
+     * Use of physics-based animations or (default) ValueAnimation
+     */
+    public boolean usePhysics;
 
-        /**
-         * Use of physics-based animations or (default) ValueAnimation
-         */
-        public boolean usePhysics;
+    /**
+     * 初期表示時にアニメーションするフラグ
+     */
+    public boolean animateInitialMove;
 
-        /**
-         * 初期表示時にアニメーションするフラグ
-         */
-        public boolean animateInitialMove;
-
-        /**
-         * オプションのデフォルト値を設定します。
-         */
-        public Options() {
-            shape = SHAPE_CIRCLE;
-            overMargin = 0;
-            floatingViewX = FloatingView.DEFAULT_X;
-            floatingViewY = FloatingView.DEFAULT_Y;
-            floatingViewWidth = FloatingView.DEFAULT_WIDTH;
-            floatingViewHeight = FloatingView.DEFAULT_HEIGHT;
-            moveDirection = MOVE_DIRECTION_DEFAULT;
-            usePhysics = true;
-            animateInitialMove = true;
-        }
-
+    /**
+     * オプションのデフォルト値を設定します。
+     */
+    public Options() {
+        shape = SHAPE_CIRCLE;
+        overMargin = 0;
+        floatingViewX = FloatingView.DEFAULT_X;
+        floatingViewY = FloatingView.DEFAULT_Y;
+        floatingViewWidth = FloatingView.DEFAULT_WIDTH;
+        floatingViewHeight = FloatingView.DEFAULT_HEIGHT;
+        moveDirection = MOVE_DIRECTION_DEFAULT;
+        usePhysics = true;
+        animateInitialMove = true;
     }
+
+}
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.tuananhe.myapplication.record;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -16,17 +17,16 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
-import android.view.WindowManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class RecordHelper {
+public class RecordHelperTest {
 
     private static final String VIDEO_MIME_TYPE = "video/avc";
 
-    private Context activity;
+    private Activity activity;
     private Point screenPoint;
 
     private MediaMuxer mediaMuxer;
@@ -34,7 +34,6 @@ public class RecordHelper {
     private Surface inputSurface;
 
     private MediaProjectionManager projectionManager;
-
     private MediaProjection mediaProjection;
 
     private boolean muxerStarted;
@@ -42,10 +41,14 @@ public class RecordHelper {
 
     private android.media.MediaCodec.Callback encoderCallback;
 
-    public RecordHelper(Context activity) {
+    public RecordHelperTest(Activity activity) {
         this.activity = activity;
         screenPoint = new Point();
         projectionManager = (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+    }
+
+    public void requestRecord(int requestCode) {
+        activity.startActivityForResult(projectionManager.createScreenCaptureIntent(), requestCode);
     }
 
     private void initCallback() {
@@ -119,14 +122,14 @@ public class RecordHelper {
         }
 
         // Lấy thông tin kích thước và tỉ lệ màn hình
-        Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        Display display = activity.getWindowManager().getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getRealSize(screenPoint);
         display.getRealMetrics(metrics);
 
         // Khởi tạo các thành phần
         initCallback();
-        prepareVideoEncoder(screenPoint.x, screenPoint.y);
+        prepareVideoEncoder(screenPoint.x , screenPoint.y);
         initMuxer();
         initVirtualDisplay(metrics);
     }
@@ -134,8 +137,8 @@ public class RecordHelper {
     private void initMuxer() {
         try {
             File outputFile = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS) + "/video", "Screen-record-" +
-                    Long.toHexString(System.currentTimeMillis()) + ".mp4");
+                Environment.DIRECTORY_DOWNLOADS) + "/video", "Screen-record-" +
+                Long.toHexString(System.currentTimeMillis()) + ".mp4");
             if (!outputFile.getParentFile().exists()) {
                 outputFile.getParentFile().mkdirs();
             }
@@ -148,8 +151,8 @@ public class RecordHelper {
     private void initVirtualDisplay(DisplayMetrics metrics) {
         // Start the video input.
         mediaProjection.createVirtualDisplay("Recording Display", screenPoint.x,
-                screenPoint.y, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR/* flags */, inputSurface,
-                null /* callback */, null /* handler */);
+            screenPoint.y, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR/* flags */, inputSurface,
+            null /* callback */, null /* handler */);
     }
 
     private void prepareVideoEncoder(int width, int height) {
@@ -159,7 +162,7 @@ public class RecordHelper {
         // Set some required properties. The media codec may fail if these aren't defined.
         //For Surface input, you must set the color format to COLOR_FormatSurface (also known as AndroidOpaque.)
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+            MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, 6000000); // 6Mbps
         format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
         format.setInteger(MediaFormat.KEY_CAPTURE_RATE, frameRate);
@@ -204,7 +207,7 @@ public class RecordHelper {
         trackIndex = -1;
     }
 
-    public void stopRecording() {
+    private void stopRecording() {
         releaseEncoders();
     }
 
