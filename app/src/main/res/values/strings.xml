@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="default_floatingview_channel_id">default_floatingview_channel</string>
+    <string name="default_floatingview_channel_name">Default Channel</string>
 
 
     //dialog
@@ -32,5 +34,6 @@
     //video
     <string name="text_remind_access_permission">Storage access permission is needed to use this feature. Please grant us Storage access permission and try again.☺</string>
     <string name="text_turn_it_on">Turn it on >></string>
+    <string name="chathead_click_message">Click</string>
 
 </resources>
