@@ -19,6 +19,8 @@ class VideoContract {
 
         fun showRenameDialog(video: Video, pos: Int)
 
+        fun goToEditVideo(video: Video)
+
         fun showPermissionSetting(permissions: Array<String>?)
 
         fun showRemindPermission()
@@ -36,6 +38,8 @@ class VideoContract {
         fun deleteVideo(video: Video)
 
         fun renameVideo(video: Video, pos: Int)
+
+        fun editVideo(video: Video)
 
         fun checkPermission(permissions: Array<String>)
 
