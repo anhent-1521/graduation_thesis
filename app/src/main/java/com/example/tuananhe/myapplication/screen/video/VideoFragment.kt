@@ -8,8 +8,10 @@ import android.view.View.VISIBLE
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
+import com.example.tuananhe.myapplication.evenBus.Event
 import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
 import com.example.tuananhe.myapplication.utils.AppUtil
+import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.Constant.Companion.COMMON_PERMISSION
 import com.example.tuananhe.myapplication.utils.Constant.Companion.VIDEO_FOLDER
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
@@ -17,6 +19,9 @@ import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.EditNameDialog
 import kotlinx.android.synthetic.main.fragment_video.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class VideoFragment : BaseFragment(), VideoContract.View {
 
@@ -24,6 +29,7 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     private val presenter: VideoPresenter = VideoPresenter(this)
     private var lastListPosition = 0
     private val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private var isRecording = false
 
     override fun getLayoutResId(): Int = R.layout.fragment_video
 
@@ -33,7 +39,12 @@ class VideoFragment : BaseFragment(), VideoContract.View {
                 button_turn_on.changePrimaryStyle(it)
             }
         }
-        button_turn_on.setOnClickListener { presenter.requestPermission(permissions, COMMON_PERMISSION) }
+        button_turn_on.setOnClickListener {
+            presenter.requestPermission(
+                permissions,
+                COMMON_PERMISSION
+            )
+        }
     }
 
     override fun provideContext() = activity
@@ -46,8 +57,11 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     }
 
     override fun onGetVideo() {
-        presenter.loadVideos(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS).toString() + VIDEO_FOLDER)
+        presenter.loadVideos(
+            Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS
+            ).toString() + VIDEO_FOLDER
+        )
 
     }
 
@@ -64,8 +78,8 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     override fun showDeleteDialog(video: Video) {
         context?.let { context ->
             val dialog = CommonDialog(
-                    context,
-                    context.getString(R.string.dialog_delete_video_title)
+                context,
+                context.getString(R.string.dialog_delete_video_title)
             )
             dialog.optimisticListener = {
                 FileUtil.deleteFile(video.path)
@@ -83,12 +97,12 @@ class VideoFragment : BaseFragment(), VideoContract.View {
             val extension = video.name?.substring(lastDot)
             val dialog = EditNameDialog(context, name)
             dialog.renameListener =
-                    { newName ->
-                        val resultFile = FileUtil.renameVideo(video.path, "$newName$extension")
-                        video.name = "$newName$extension"
-                        video.path = resultFile.path
-                        videoAdapter?.rename(video, pos)
-                    }
+                { newName ->
+                    val resultFile = FileUtil.renameVideo(video.path, "$newName$extension")
+                    video.name = "$newName$extension"
+                    video.path = resultFile.path
+                    videoAdapter?.rename(video, pos)
+                }
             dialog.show()
         }
     }
@@ -106,12 +120,30 @@ class VideoFragment : BaseFragment(), VideoContract.View {
 
     override fun onResume() {
         super.onResume()
-        presenter.checkPermission(permissions)
+        if (!isRecording) {
+            presenter.checkPermission(permissions)
+        }
+        EventBus.getDefault().register(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public fun onMessageEvent(event: Event) {
+        when (event.action) {
+            Constant.START_RECORD -> {
+                isRecording = true
+            }
+            Constant.STOP_RECORD -> {
+                isRecording = false
+                onGetVideo()
+            }
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        lastListPosition = (recycler_videos.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+        lastListPosition =
+            (recycler_videos.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+        EventBus.getDefault().unregister(this)
     }
 
     private fun setupAdapter(videos: ArrayList<Video>) {

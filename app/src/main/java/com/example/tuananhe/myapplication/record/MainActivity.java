@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA};
 
-    private RecordHelper recordHelper;
+    private RecordHelperTest recordHelper;
     private VideoPresenter videoRetriever;
 
     @Override
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        recordHelper = new RecordHelper(this);
+        recordHelper = new RecordHelperTest(this);
 //        videoRetriever = new VideoPresenter();
 
         if (!hasPermission(permissions)) {

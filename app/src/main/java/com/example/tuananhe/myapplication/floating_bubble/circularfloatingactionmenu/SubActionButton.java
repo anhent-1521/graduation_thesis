@@ -28,21 +28,6 @@ public class SubActionButton extends FrameLayout {
             if(theme == THEME_LIGHT) {
                 backgroundDrawable = context.getResources().getDrawable(R.drawable.button_sub_action_selector);
             }
-            else if(theme == THEME_DARK) {
-                backgroundDrawable = context.getResources().getDrawable(R.drawable.button_sub_action_dark_selector);
-            }
-            else if(theme == THEME_LIGHTER) {
-                backgroundDrawable = context.getResources().getDrawable(R.drawable.button_action_selector);
-            }
-            else if(theme == THEME_DARKER) {
-                backgroundDrawable = context.getResources().getDrawable(R.drawable.button_action_dark_selector);
-            }
-            else {
-                throw new RuntimeException("Unknown SubActionButton theme: " + theme);
-            }
-        }
-        else {
-            backgroundDrawable = backgroundDrawable.mutate().getConstantState().newDrawable();
         }
         setBackgroundResource(backgroundDrawable);
         if(contentView != null) {

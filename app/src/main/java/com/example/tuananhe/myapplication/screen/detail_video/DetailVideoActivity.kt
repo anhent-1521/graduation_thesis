@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Point
 import android.media.MediaPlayer
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 import android.view.View.VISIBLE
@@ -170,6 +171,9 @@ class DetailVideoActivity : BaseActivity() {
 
     private fun setVideoSize() {
         val param = video_view.layoutParams
+        if (realWidth >= param.width && realWidth >= param.height) {
+            return
+        }
         if (realWidth >= realHeight) {
             if (realHeight >= screenHeight) {
                 param.width = if (realWidth >= screenWidth) screenWidth else realWidth
@@ -197,6 +201,7 @@ class DetailVideoActivity : BaseActivity() {
 
     private fun initControl() {
         seekbar_progress.max = player?.duration ?: 0
+        Log.d("-----------", player!!.duration.toString())
         text_duration.text = MediaUtil.getVideoDuration(video?.duration ?: 0)
         image_play_pause.setBackgroundResource(R.drawable.bg_pause)
         image_play_pause.visibility = VISIBLE
@@ -228,12 +233,15 @@ class DetailVideoActivity : BaseActivity() {
     }
 
     private fun completeVideo() {
-        progressHandler.removeCallbacks(progressRunnable)
-        controlHandler.removeCallbacks(controlRunnable)
         isComplete = true
         player?.reset()
         image_play_pause.setBackgroundResource(R.drawable.bg_play)
         fadeOutControl()
+        progressHandler.postDelayed({
+            progressHandler.removeCallbacks(progressRunnable)
+            controlHandler.removeCallbacks(controlRunnable)
+        }, (seekbar_progress.max - seekbar_progress.progress).toLong())
+
     }
 
     private fun fadeControl() {
@@ -269,6 +277,7 @@ class DetailVideoActivity : BaseActivity() {
     private fun updateProgress() {
         val current = player?.currentPosition ?: 0
         seekbar_progress.progress = current
+        Log.d("-----------", current.toString())
         text_current.text = MediaUtil.getVideoDuration(current / SECOND_UNIT)
     }
 

@@ -52,10 +52,10 @@ public class FloatingActionButton extends FrameLayout {
         super(context);
         this.systemOverlay = systemOverlay;
 
-        if(!systemOverlay && !(context instanceof Activity)) {
-            throw new RuntimeException("Given context must be an instance of Activity, "
-                    +"since this FAB is not a systemOverlay.");
-        }
+//        if(!systemOverlay && !(context instanceof Activity)) {
+//            throw new RuntimeException("Given context must be an instance of Activity, "
+//                    +"since this FAB is not a systemOverlay.");
+//        }
 
         setPosition(position, layoutParams);
 
