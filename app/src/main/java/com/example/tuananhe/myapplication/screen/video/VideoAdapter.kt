@@ -17,6 +17,7 @@ class VideoAdapter(private var videos: ArrayList<Video>) :
     var shareListener: ((String?) -> Unit)? = null
     var deleteListener: ((Video) -> Unit)? = null
     var renameListener: ((Video, Int) -> Unit)? = null
+    var editListener: ((Video) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_video, parent, false))
@@ -58,6 +59,7 @@ class VideoAdapter(private var videos: ArrayList<Video>) :
             itemView.setOnClickListener { listener?.invoke(video) }
             itemView.image_share.setOnClickListener { shareListener?.invoke(video.path) }
             itemView.image_delete.setOnClickListener { deleteListener?.invoke(video) }
+            itemView.image_edit.setOnClickListener { editListener?.invoke(video) }
             itemView.image_rename.setOnClickListener {
                 renameListener?.invoke(
                     video,

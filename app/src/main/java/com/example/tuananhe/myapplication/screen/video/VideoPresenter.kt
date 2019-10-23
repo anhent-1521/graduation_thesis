@@ -53,6 +53,10 @@ class VideoPresenter(private var view: VideoContract.View) : VideoContract.Prese
         view.showRenameDialog(video, pos)
     }
 
+    override fun editVideo(video: Video) {
+        view.goToEditVideo(video)
+    }
+
     override fun checkPermission(permissions: Array<String>) {
         view.provideContext()?.let {
             if (AppUtil.hasPermission(it, permissions)) {

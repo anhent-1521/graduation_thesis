@@ -1,6 +1,7 @@
 package com.example.tuananhe.myapplication.screen.video
 
 import android.Manifest
+import android.content.Intent
 import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View.GONE
@@ -10,6 +11,7 @@ import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.evenBus.Event
 import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
+import com.example.tuananhe.myapplication.screen.edit_video.EditVideoActivity
 import com.example.tuananhe.myapplication.utils.AppUtil
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.Constant.Companion.COMMON_PERMISSION
@@ -107,6 +109,10 @@ class VideoFragment : BaseFragment(), VideoContract.View {
         }
     }
 
+    override fun goToEditVideo(video: Video) {
+        startActivity((EditVideoActivity.getEditVideoActivityIntent(context, video)))
+    }
+
     override fun showRemindPermission() {
         layout_remind_permission.visibility = VISIBLE
         recycler_videos.visibility = GONE
@@ -153,6 +159,7 @@ class VideoFragment : BaseFragment(), VideoContract.View {
             videoAdapter?.shareListener = { path -> presenter.shareVideo(path) }
             videoAdapter?.deleteListener = { video -> presenter.deleteVideo(video) }
             videoAdapter?.renameListener = { video, pos -> presenter.renameVideo(video, pos) }
+            videoAdapter?.editListener = { video -> presenter.editVideo(video) }
             recycler_videos.adapter = videoAdapter
         } else {
             videoAdapter?.update(videos)
