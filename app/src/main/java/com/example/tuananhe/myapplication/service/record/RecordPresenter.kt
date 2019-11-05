@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import com.example.tuananhe.myapplication.evenBus.Event
+import com.example.tuananhe.myapplication.notification.NotificationHelper
 import com.example.tuananhe.myapplication.record.RecordHelper
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.MediaUtil
@@ -20,13 +21,16 @@ class RecordPresenter(private val view: RecordContract.View) : RecordContract.Pr
         override fun run() {
             val time = MediaUtil.getVideoDuration(duration)
             EventBus.getDefault().post(Event(Constant.RECORDING, time))
-            duration ++
+            duration++
             recordHandler.postDelayed(this, 1000)
         }
     }
 
+    private var notificationHelper: NotificationHelper? = null
+
     override fun getRecordHelper() {
         recordHelper = RecordHelper(getContent())
+        notificationHelper = NotificationHelper(view.provideContext())
     }
 
     override fun getContent(): Context = view.provideContext()
@@ -35,17 +39,33 @@ class RecordPresenter(private val view: RecordContract.View) : RecordContract.Pr
         val action = intent.action
         when (action) {
             Constant.START_RECORD -> {
-                val data = intent.getParcelableExtra<Intent>(Constant.EXTRAR_DATA_INTENT)
+                val data = intent.getParcelableExtra<Intent>(Constant.EXTRA_DATA_INTENT)
                 val resultCode = intent.getIntExtra(Constant.EXTRA_RESULT_CODE, 0)
+                notificationHelper?.showRecordingNotification()
                 recordHelper.startRecord(data, resultCode)
                 startTime()
             }
             Constant.PAUSE_RECORD -> {
-                recordHelper.stopRecording()
+                notificationHelper?.showPauseNotification()
+                recordHelper.pauseRecord()
+                pauseTime()
+            }
+            Constant.RESUME_RECORD -> {
+                notificationHelper?.showRecordingNotification()
+                recordHelper.resumeRecord()
+                startTime()
             }
             Constant.STOP_RECORD -> {
-                recordHelper.stopRecording()
+                notificationHelper?.showNormalNotification()
+                recordHelper.stopRecord()
                 stopTime()
+            }
+            Constant.EXIT_RECORD -> {
+                recordHelper.stopRecord()
+                view.exitRecord()
+            }
+            Constant.HIDE_NOTI -> {
+                view.exitRecord()
             }
         }
         EventBus.getDefault().post(Event(action))
@@ -56,8 +76,12 @@ class RecordPresenter(private val view: RecordContract.View) : RecordContract.Pr
         recordHandler.post(recordRunnable)
     }
 
-    private fun stopTime() {
+    private fun pauseTime() {
         recordHandler.removeCallbacks(recordRunnable)
+    }
+
+    private fun stopTime() {
+        pauseTime()
         duration = 0
     }
 }

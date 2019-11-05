@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="resolution">
+        <item>240p</item>
+        <item>360p</item>
+        <item>480p</item>
+        <item>540p</item>
+        <item>720p</item>
+        <item>1080p</item>
+    </string-array>
+
+    <string-array name="bitrate">
+        <item>Auto</item>
+        <item>2 Mbps</item>
+        <item>3 Mbps</item>
+        <item>4 Mbps</item>
+        <item>5 Mbps</item>
+        <item>8 Mbps</item>
+        <item>12 Mbps</item>
+    </string-array>
+
+    <string-array name="fps">
+        <item>25 FPS</item>
+        <item>30 FPS</item>
+        <item>40 FPS</item>
+        <item>50 FPS</item>
+        <item>60 FPS</item>
+    </string-array>
+
+    <string-array name="count_down">
+        <item>No count down</item>
+        <item>3s</item>
+        <item>5s</item>
+        <item>10s</item>
+    </string-array>
+
+
+</resources>

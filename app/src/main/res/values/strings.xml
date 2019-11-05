@@ -26,6 +26,8 @@
     <string name="text_video_audio">Record Audio</string>
     <string name="text_video_audio_note">Internal audio record is not allowed by Android now</string>
     <string name="text_video_location">Video Location</string>
+    <string name="text_show_control">Show Control</string>
+    <string name="text_show_control_note">Show the record window when record</string>
 
     //edit
     <string name="text_video_editor">Video Editor</string>
@@ -35,5 +37,12 @@
     <string name="text_remind_access_permission">Storage access permission is needed to use this feature. Please grant us Storage access permission and try again.☺</string>
     <string name="text_turn_it_on">Turn it on >></string>
     <string name="chathead_click_message">Click</string>
+
+    //Setting
+    <string name="cancel">Cancel</string>
+    <string name="select_resolution">Select video resolution</string>
+    <string name="show_control">Show the record window when record</string>
+    <string name="select_bitrate">Select bitrate</string>
+    <string name="select_fps">Select frame rate</string>
 
 </resources>

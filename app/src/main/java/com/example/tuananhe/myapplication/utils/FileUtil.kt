@@ -42,8 +42,7 @@ class FileUtil {
         }
 
         fun renameVideo(path: String?, newName: String?): File {
-            val directory =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + Constant.VIDEO_FOLDER
+            val directory = Settings.getSetting().rootDirectory
             val old = File(path)
             val file = File(directory, newName)
             if (old.exists()) {
@@ -51,6 +50,13 @@ class FileUtil {
                 return file
             }
             return old
+        }
+
+        fun checkIfHaveSDCard(): Boolean {
+            val isSDPresent =
+                Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+            val isSDSupportedDevice = Environment.isExternalStorageRemovable()
+            return isSDSupportedDevice && isSDPresent
         }
     }
 }

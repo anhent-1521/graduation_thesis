@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -28,9 +27,7 @@ import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.DisplayCutout;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -42,16 +39,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tuananhe.myapplication.R;
-import com.example.tuananhe.myapplication.evenBus.Event;
-import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionButton;
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionMenu;
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.SubActionButton;
 import com.example.tuananhe.myapplication.utils.AppUtil;
 import com.example.tuananhe.myapplication.utils.Constant;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.example.tuananhe.myapplication.utils.Settings;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -119,7 +111,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
      * Moving direction
      */
     @IntDef({MOVE_DIRECTION_DEFAULT, MOVE_DIRECTION_LEFT, MOVE_DIRECTION_RIGHT,
-            MOVE_DIRECTION_NEAREST, MOVE_DIRECTION_NONE, MOVE_DIRECTION_THROWN})
+        MOVE_DIRECTION_NEAREST, MOVE_DIRECTION_NONE, MOVE_DIRECTION_THROWN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface MoveDirection {
     }
@@ -229,7 +221,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         mFloatingViewList = new ArrayList<>();
         mFullscreenObserverView = new FullscreenObserverView(context, this);
         mTrashView = new TrashView(context);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     /**
@@ -538,7 +530,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
      * @param view    フローティングさせるView
      * @param options Options
      */
-    public FloatingActionMenu addViewToWindow(View view, Options options) {
+    public FloatingActionMenu addViewToWindow(View view, Options options, boolean isStartRecord) {
         final boolean isFirstAttach = mFloatingViewList.isEmpty();
         // FloatingView
         final FloatingView floatingView = new FloatingView(mContext);
@@ -554,6 +546,9 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         // set FloatingView size
         final FrameLayout.LayoutParams targetParams = new FrameLayout.LayoutParams(options.floatingViewWidth, options.floatingViewHeight);
         view.setLayoutParams(targetParams);
+        if (mTargetFloatingView != null) {
+            mTargetFloatingView.removeAllViews();
+        }
         floatingView.addView(view);
 
         // 非表示モードの場合
@@ -575,16 +570,24 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         }
         // 必ずトップに来て欲しいので毎回貼り付け
         mWindowManager.addView(mTrashView, mTrashView.getWindowLayoutParams());
-        textTime = mTargetFloatingView.findViewById(R.id.text_time);
+        if (textTime == null) {
+            textTime = mTargetFloatingView.findViewById(R.id.text_time);
+        }
 
-        return mFloatingActionMenu = createMenu(mContext, floatingView);
+        return mFloatingActionMenu = createMenu(mContext, floatingView, isStartRecord);
     }
 
     private Handler clickHandler = new Handler();
     private Runnable clickRunnable = new Runnable() {
         @Override
         public void run() {
-            frogFloatingView();
+            if (!Settings.Companion.getSetting().isShowControl()) {
+                if (recordState == Constant.RECORD_STATE_STOPPED || recordState == Constant.RECORD_STATE_PAUSED) {
+                    frogFloatingView();
+                }
+            } else {
+                frogFloatingView();
+            }
             if (mFloatingActionMenu != null && mFloatingActionMenu.isOpen())
                 mFloatingActionMenu.close(true);
         }
@@ -602,43 +605,41 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
 
     private FloatingActionMenu mFloatingActionMenu;
 
-    private FloatingActionMenu createMenu(final Context context, View view) {
+    private FloatingActionMenu createMenu(final Context context, View view, final boolean isStartRecord) {
 
         int size = context.getResources().getDimensionPixelSize(R.dimen.action_menu_size);
 
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(context);
 
         ImageView item1 = new ImageView(context);
-        item1.setImageResource(R.drawable.ic_rec);
+        item1.setImageResource(isStartRecord ? R.drawable.ic_stop : R.drawable.ic_rec);
         SubActionButton button1 = itemBuilder.setContentView(item1).build();
 
         ImageView item2 = new ImageView(context);
         item2.setImageResource(R.drawable.ic_home);
         SubActionButton button2 = itemBuilder.setContentView(item2).build();
-        ImageView item3 = new ImageView(context);
 
+        ImageView item3 = new ImageView(context);
         item3.setImageResource(R.drawable.ic_screenshot);
         SubActionButton button3 = itemBuilder.setContentView(item3).build();
-        item3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppUtil.Companion.pauseRecord(context, Constant.PAUSE_RECORD);
-            }
-        });
 
         ImageView item4 = new ImageView(context);
-        item4.setImageResource(R.drawable.ic_settings);
-        SubActionButton button4 = itemBuilder.setContentView(item4).build();
+        SubActionButton button4;
+        if (isStartRecord) {
+            item4.setImageResource(recordState == Constant.RECORD_STATE_PAUSED
+                ? R.drawable.ic_resume_record : R.drawable.ic_pause_record);
+        } else {
+            item4.setImageResource(R.drawable.ic_settings);
+        }
+        button4 = itemBuilder.setContentView(item4).build();
 
         item1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (recordState != Constant.RECORD_STATE_STARTED) {
-                    Log.d("-----", "onClick: start");
+                if (recordState == Constant.RECORD_STATE_STOPPED) {
                     AppUtil.Companion.startTransparentRecord(context, Constant.START_RECORD);
                 } else {
-                    Log.d("-----", "onClick: stop");
-                    AppUtil.Companion.stopRecord(context, Constant.STOP_RECORD);
+                    AppUtil.Companion.controlRecord(context, Constant.STOP_RECORD);
                 }
                 mFloatingActionMenu.toggle(true);
             }
@@ -650,64 +651,17 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
                 mFloatingActionMenu.toggle(true);
             }
         });
-
-        return new FloatingActionMenu.Builder(context)
-                .addSubActionView(button1, size, size)
-                .addSubActionView(button2, size, size)
-                .addSubActionView(button3, size, size)
-                .addSubActionView(button4, size, size)
-                .attachTo(view)
-                .setRadius(170)
-                .setSystemOverlay(true)
-                .setStateChangeListener(listener)
-                .build();
-    }
-
-    private FloatingActionMenu createMenuRecording(final Context context, View view) {
-
-        int size = context.getResources().getDimensionPixelSize(R.dimen.action_menu_size);
-
-        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(context);
-
-        ImageView item1 = new ImageView(context);
-        item1.setImageResource(R.drawable.ic_pause_record);
-        SubActionButton button1 = itemBuilder.setContentView(item1).build();
-
-        ImageView item2 = new ImageView(context);
-        item2.setImageResource(R.drawable.ic_home);
-        SubActionButton button2 = itemBuilder.setContentView(item2).build();
-        ImageView item3 = new ImageView(context);
-
-        item3.setImageResource(R.drawable.ic_screenshot);
-        SubActionButton button3 = itemBuilder.setContentView(item3).build();
-        item3.setOnClickListener(new View.OnClickListener() {
+        item4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppUtil.Companion.pauseRecord(context, Constant.PAUSE_RECORD);
-            }
-        });
-
-        ImageView item4 = new ImageView(context);
-        item4.setImageResource(R.drawable.ic_settings);
-        SubActionButton button4 = itemBuilder.setContentView(item4).build();
-
-        item1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recordState != Constant.RECORD_STATE_STARTED) {
-                    Log.d("-----", "onClick: start");
-                    AppUtil.Companion.startTransparentRecord(context, Constant.START_RECORD);
-                } else {
-                    Log.d("-----", "onClick: stop");
-                    AppUtil.Companion.stopRecord(context, Constant.STOP_RECORD);
+                if (isStartRecord) {
+                    if (recordState == Constant.RECORD_STATE_STARTED
+                        || recordState == Constant.RECORD_STATE_RESUMED) {
+                        AppUtil.Companion.controlRecord(context, Constant.PAUSE_RECORD);
+                    } else if (recordState == Constant.RECORD_STATE_PAUSED) {
+                        AppUtil.Companion.controlRecord(context, Constant.RESUME_RECORD);
+                    }
                 }
-                mFloatingActionMenu.toggle(true);
-            }
-        });
-        item2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppUtil.Companion.startHome(context);
                 mFloatingActionMenu.toggle(true);
             }
         });
@@ -742,33 +696,45 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         mWindowManager.updateViewLayout(mTargetFloatingView, params);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(Event event) {
-        if (event.getAction() == null) return;
-        switch (event.getAction()) {
-            case Constant.START_RECORD:
-                frogFloatingView();
-                textTime.setVisibility(View.VISIBLE);
-                recordState = Constant.RECORD_STATE_STARTED;
-                ImageView record = (ImageView) mFloatingActionMenu.getSubActionItems().get(0).view;
-                record.setImageResource(R.drawable.ic_pause_record);
-                break;
-            case Constant.RECORDING:
-                textTime.setText(event.getMessage());
-                break;
-            case Constant.STOP_RECORD:
-                textTime.setVisibility(View.GONE);
-                recordState = Constant.RECORD_STATE_STOPPED;
-                ImageView pause = (ImageView) mFloatingActionMenu.getSubActionItems().get(0).view;
-                pause.setImageResource(R.drawable.ic_rec);
-                mFloatingActionMenu.updateItemPositions();
-                break;
-            default:
-                break;
+
+    public void finish() {
+        if (mTargetFloatingView != null) {
+            mTargetFloatingView.setFinishing();
+        }
+        if (mFloatingActionMenu != null && mFloatingActionMenu.isOpen()) {
+            mFloatingActionMenu.close(true);
         }
     }
 
-    private int recordState = -1;
+    public void onRecordStarted() {
+        textTime.setVisibility(View.VISIBLE);
+        if (Settings.Companion.getSetting().isShowControl()) {
+            frogFloatingView();
+        } else {
+            hideFloatingView();
+        }
+        recordState = Constant.RECORD_STATE_STARTED;
+    }
+
+    public void onRecordStopped() {
+        textTime.setVisibility(View.GONE);
+        recordState = Constant.RECORD_STATE_STOPPED;
+        showFloatingView();
+    }
+
+    public void onRecordPaused() {
+        recordState = Constant.RECORD_STATE_PAUSED;
+    }
+
+    public void onRecordResumed() {
+        recordState = Constant.RECORD_STATE_RESUMED;
+    }
+
+    public void onRecording(String time) {
+        textTime.setText(time);
+    }
+
+    private int recordState = Constant.RECORD_STATE_STOPPED;
 
     private FloatingActionMenu.MenuStateChangeListener listener;
 
@@ -812,7 +778,7 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
             removeViewImmediate(floatingView);
         }
         mFloatingViewList.clear();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -858,74 +824,74 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         return safeInsetRect;
     }
 
-/**
- * FloatingViewを貼り付ける際のオプションを表すクラスです。
- */
-public static class Options {
-
     /**
-     * フローティングさせるViewの矩形（SHAPE_RECTANGLE or SHAPE_CIRCLE）
+     * FloatingViewを貼り付ける際のオプションを表すクラスです。
      */
-    public float shape;
+    public static class Options {
 
-    /**
-     * 画面外のはみ出しマージン(px)
-     */
-    public int overMargin;
+        /**
+         * フローティングさせるViewの矩形（SHAPE_RECTANGLE or SHAPE_CIRCLE）
+         */
+        public float shape;
 
-    /**
-     * 画面左下を原点とするFloatingViewのX座標
-     */
-    public int floatingViewX;
+        /**
+         * 画面外のはみ出しマージン(px)
+         */
+        public int overMargin;
 
-    /**
-     * 画面左下を原点とするFloatingViewのY座標
-     */
-    public int floatingViewY;
+        /**
+         * 画面左下を原点とするFloatingViewのX座標
+         */
+        public int floatingViewX;
 
-    /**
-     * Width of FloatingView(px)
-     */
-    public int floatingViewWidth;
+        /**
+         * 画面左下を原点とするFloatingViewのY座標
+         */
+        public int floatingViewY;
 
-    /**
-     * Height of FloatingView(px)
-     */
-    public int floatingViewHeight;
+        /**
+         * Width of FloatingView(px)
+         */
+        public int floatingViewWidth;
 
-    /**
-     * FloatingViewが吸着する方向
-     * ※座標を指定すると自動的にMOVE_DIRECTION_NONEになります
-     */
-    @MoveDirection
-    public int moveDirection;
+        /**
+         * Height of FloatingView(px)
+         */
+        public int floatingViewHeight;
 
-    /**
-     * Use of physics-based animations or (default) ValueAnimation
-     */
-    public boolean usePhysics;
+        /**
+         * FloatingViewが吸着する方向
+         * ※座標を指定すると自動的にMOVE_DIRECTION_NONEになります
+         */
+        @MoveDirection
+        public int moveDirection;
 
-    /**
-     * 初期表示時にアニメーションするフラグ
-     */
-    public boolean animateInitialMove;
+        /**
+         * Use of physics-based animations or (default) ValueAnimation
+         */
+        public boolean usePhysics;
 
-    /**
-     * オプションのデフォルト値を設定します。
-     */
-    public Options() {
-        shape = SHAPE_CIRCLE;
-        overMargin = 0;
-        floatingViewX = FloatingView.DEFAULT_X;
-        floatingViewY = FloatingView.DEFAULT_Y;
-        floatingViewWidth = FloatingView.DEFAULT_WIDTH;
-        floatingViewHeight = FloatingView.DEFAULT_HEIGHT;
-        moveDirection = MOVE_DIRECTION_DEFAULT;
-        usePhysics = true;
-        animateInitialMove = true;
+        /**
+         * 初期表示時にアニメーションするフラグ
+         */
+        public boolean animateInitialMove;
+
+        /**
+         * オプションのデフォルト値を設定します。
+         */
+        public Options() {
+            shape = SHAPE_CIRCLE;
+            overMargin = 0;
+            floatingViewX = FloatingView.DEFAULT_X;
+            floatingViewY = FloatingView.DEFAULT_Y;
+            floatingViewWidth = FloatingView.DEFAULT_WIDTH;
+            floatingViewHeight = FloatingView.DEFAULT_HEIGHT;
+            moveDirection = MOVE_DIRECTION_DEFAULT;
+            usePhysics = true;
+            animateInitialMove = true;
+        }
+
     }
-
-}
 
 
 }

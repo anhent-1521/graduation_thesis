@@ -71,13 +71,7 @@ class AppUtil {
             context.startActivity(intent)
         }
 
-        fun pauseRecord(context: Context, action: String) {
-            val intent = Intent(context, RecordService::class.java)
-            intent.action = action
-            context.startService(intent)
-        }
-
-        fun stopRecord(context: Context, action: String) {
+        fun controlRecord(context: Context, action: String) {
             val intent = Intent(context, RecordService::class.java)
             intent.action = action
             context.startService(intent)

@@ -45,7 +45,7 @@ class TransparentPresenter(private val view: TransparentContract.View) : Transpa
         val intent = Intent(getActivity(), RecordService::class.java)
         intent.action = Constant.START_RECORD
         intent.putExtra(Constant.EXTRA_RESULT_CODE, resultCode)
-        intent.putExtra(Constant.EXTRAR_DATA_INTENT, data)
+        intent.putExtra(Constant.EXTRA_DATA_INTENT, data)
         getActivity().startService(intent)
     }
 
