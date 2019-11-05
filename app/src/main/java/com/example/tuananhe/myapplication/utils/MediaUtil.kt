@@ -1,7 +1,9 @@
 package com.example.tuananhe.myapplication.utils
 
+import android.net.ParseException
 import android.text.format.DateUtils
 import java.io.File
+import java.util.regex.Pattern
 
 class MediaUtil {
 
@@ -29,6 +31,31 @@ class MediaUtil {
                 }
                 else -> "$sizeInKb KB"
             }
+        }
+
+        fun extractTime(log: String): Int {
+            val pattern = Pattern.compile("(\\d\\d):(\\d\\d):(\\d\\d)")
+            val matcher = pattern.matcher(log)
+            var time = 0
+            if (matcher.find()) {
+                val times = matcher.group(0).split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                for (i in times.indices) {
+                    try {
+                        val timeStr = times[i]
+                        val timeInt = Integer.parseInt(timeStr)
+                        when (i) {
+                            0 -> time += timeInt * 60 * 60
+                            1 -> time += timeInt * 60
+                            2 -> time += timeInt
+                        }
+
+                    } catch (e: ParseException) {
+                    }
+
+                }
+            }
+
+            return time
         }
     }
 }

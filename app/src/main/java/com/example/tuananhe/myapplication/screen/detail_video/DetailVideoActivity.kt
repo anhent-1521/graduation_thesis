@@ -233,15 +233,12 @@ class DetailVideoActivity : BaseActivity() {
     }
 
     private fun completeVideo() {
+        progressHandler.removeCallbacks(progressRunnable)
+        controlHandler.removeCallbacks(controlRunnable)
         isComplete = true
         player?.reset()
         image_play_pause.setBackgroundResource(R.drawable.bg_play)
         fadeOutControl()
-        progressHandler.postDelayed({
-            progressHandler.removeCallbacks(progressRunnable)
-            controlHandler.removeCallbacks(controlRunnable)
-        }, (seekbar_progress.max - seekbar_progress.progress).toLong())
-
     }
 
     private fun fadeControl() {
