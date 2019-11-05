@@ -9,7 +9,12 @@ class RecordService : Service(), RecordContract.View {
 
     private val presenter = RecordPresenter(this)
 
-    override fun provideContext(): Context = this
+    override fun provideContext(): Service = this
+
+    override fun exitRecord() {
+        stopForeground(true)
+        stopSelf()
+    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 

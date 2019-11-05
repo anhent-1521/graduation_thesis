@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_white"
@@ -26,7 +27,8 @@
             android:id="@+id/constrain_resolution"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_video_setting">
 
@@ -75,7 +77,8 @@
             android:id="@+id/constrain_quality"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/constrain_resolution">
 
@@ -137,7 +140,8 @@
             android:id="@+id/constrain_fps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/constrain_quality">
 
@@ -199,7 +203,8 @@
             android:id="@+id/constrain_audio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/constrain_fps">
 
@@ -254,12 +259,72 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/constrain_control"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constrain_audio">
+
+            <ImageView
+                android:id="@+id/image_control"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_moon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/text_show_control"
+                android:textColor="@color/color_transparent_black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@id/image_control"
+                app:layout_constraintTop_toTopOf="@id/image_control" />
+
+            <TextView
+                android:id="@+id/text_control"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/text_show_control_note"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/switch_control"
+                app:layout_constraintStart_toEndOf="@id/image_control"
+                app:layout_constraintTop_toBottomOf="@id/image_control" />
+
+            <Switch
+                android:id="@+id/switch_control"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/color_transparent_black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/text_control"
+                app:layout_constraintTop_toBottomOf="@id/text_control" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/constrain_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/constrain_audio">
+            app:layout_constraintTop_toBottomOf="@id/constrain_control">
 
             <ImageView
                 android:id="@+id/image_location"
@@ -285,7 +350,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
-                android:text="@string/text_video_audio_note"
+                android:text="@string/text_video_resolution"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@id/image_location"
                 app:layout_constraintTop_toBottomOf="@id/image_location" />

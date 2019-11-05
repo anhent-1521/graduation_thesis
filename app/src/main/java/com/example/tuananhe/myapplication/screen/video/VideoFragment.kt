@@ -12,12 +12,8 @@ import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.evenBus.Event
 import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
 import com.example.tuananhe.myapplication.screen.edit_video.EditVideoActivity
-import com.example.tuananhe.myapplication.utils.AppUtil
-import com.example.tuananhe.myapplication.utils.Constant
+import com.example.tuananhe.myapplication.utils.*
 import com.example.tuananhe.myapplication.utils.Constant.Companion.COMMON_PERMISSION
-import com.example.tuananhe.myapplication.utils.Constant.Companion.VIDEO_FOLDER
-import com.example.tuananhe.myapplication.utils.ExtensionUtil
-import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.EditNameDialog
 import kotlinx.android.synthetic.main.fragment_video.*
@@ -59,11 +55,8 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     }
 
     override fun onGetVideo() {
-        presenter.loadVideos(
-            Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS
-            ).toString() + VIDEO_FOLDER
-        )
+        val setting = Settings.getSetting()
+        presenter.loadVideos(setting.rootDirectory)
 
     }
 

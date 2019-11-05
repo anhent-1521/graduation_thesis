@@ -27,13 +27,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".record.MainActivity">
-
-        </activity>
         <activity
             android:name=".screen.main.HomeActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,9 +46,10 @@
             android:name=".screen.detail_video.DetailVideoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/DetailImageTheme" />
-        <activity android:name=".screen.transparent.TransparentActivity"
+        <activity
+            android:name=".screen.transparent.TransparentActivity"
             android:launchMode="singleInstance"
-            android:theme="@style/Transparent"/>
+            android:theme="@style/Transparent" />
         <activity android:name=".screen.edit_video.EditVideoActivity" />
 
         <provider
@@ -63,11 +61,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
+
         <service
             android:name=".service.BubbleService"
             android:exported="false" />
-        <service android:name=".service.record.RecordService"
-            android:exported="false"/>
+        <service
+            android:name=".service.record.RecordService"
+            android:exported="false" />
 
     </application>
 

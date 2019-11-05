@@ -1,5 +1,9 @@
 package com.example.tuananhe.myapplication.utils
 
+import android.media.AudioFormat
+import android.media.AudioFormat.*
+import android.media.AudioRecord
+import android.media.MediaRecorder
 import android.net.ParseException
 import android.text.format.DateUtils
 import java.io.File
@@ -10,7 +14,7 @@ class MediaUtil {
     companion object {
 
         fun getVideoDuration(durationInLong: Long): String =
-            DateUtils.formatElapsedTime(durationInLong)
+                DateUtils.formatElapsedTime(durationInLong)
 
         fun getVideoSize(path: String?): String {
             return try {
@@ -56,6 +60,29 @@ class MediaUtil {
             }
 
             return time
+        }
+
+        fun validateMicAvailability(): Boolean {
+            var available = true
+            val recorder = AudioRecord(MediaRecorder.AudioSource.MIC, 44100,
+                    CHANNEL_IN_MONO,
+                    ENCODING_DEFAULT, 44100)
+            try {
+                if (recorder.recordingState != AudioRecord.RECORDSTATE_STOPPED) {
+                    available = false
+
+                }
+                recorder.startRecording()
+                if (recorder.recordingState != AudioRecord.RECORDSTATE_RECORDING) {
+                    recorder.stop()
+                    available = false
+
+                }
+            } finally {
+                recorder.stop()
+                recorder.release()
+            }
+            return available
         }
     }
 }
