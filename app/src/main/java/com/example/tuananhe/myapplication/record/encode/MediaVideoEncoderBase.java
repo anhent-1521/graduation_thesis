@@ -34,7 +34,7 @@ import java.io.IOException;
 
 
 public abstract class MediaVideoEncoderBase extends MediaEncoder {
-    private static final boolean DEBUG = false;	// TODO set false on release
+    private static final boolean DEBUG = false;    // TODO set false on release
     private static final String TAG = MediaVideoEncoderBase.class.getSimpleName();
 
     // parameters for recording
@@ -49,22 +49,23 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
         super(muxer, listener);
         mWidth = width;
         mHeight = height;
-        int evenWidth = screenPoint.x % 2 == 0 ? screenPoint.x : screenPoint.x -1;
-        int evenHeight = screenPoint.x % 2 == 0 ? screenPoint.y : screenPoint.y -1;
+        int evenWidth = screenPoint.x % 2 == 0 ? screenPoint.x : screenPoint.x - 1;
+        int evenHeight = screenPoint.x % 2 == 0 ? screenPoint.y : screenPoint.y - 1;
         this.screenPoint = new Point(evenWidth, evenHeight);
     }
 
     /**
      * エンコーダー用のMediaFormatを生成する。prepare_surface_encoder内から呼び出される
+     *
      * @param mime
      * @param frame_rate
      * @param bitrate
      * @return
      */
     protected MediaFormat create_encoder_format(final String mime, final int frame_rate, final int bitrate) {
-        if (DEBUG) Log.v(TAG, String.format("create_encoder_format:(%d,%d),mime=%s,frame_rate=%d,bitrate=%d", mWidth, mHeight, mime, frame_rate, bitrate));
+        Log.v(TAG, String.format("create_encoder_format:(%d,%d),mime=%s,frame_rate=%d,bitrate=%d", screenPoint.x, screenPoint.y, mime, frame_rate, bitrate));
         final MediaFormat format = MediaFormat.createVideoFormat(mime, mWidth, mHeight);
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);	// API >= 18
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);    // API >= 18
         format.setInteger(MediaFormat.KEY_BIT_RATE, bitrate > 0 ? bitrate : calcBitRate(frame_rate));
         format.setInteger(MediaFormat.KEY_FRAME_RATE, frame_rate);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
@@ -72,9 +73,10 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
     }
 
     protected Surface prepare_surface_encoder(final String mime, final int frame_rate, final int bitrate)
-            throws IOException, IllegalArgumentException {
+        throws IOException, IllegalArgumentException {
 
-        if (DEBUG) Log.v(TAG, String.format("prepare_surface_encoder:(%d,%d),mime=%s,frame_rate=%d,bitrate=%d", mWidth, mHeight, mime, frame_rate, bitrate));
+        if (DEBUG)
+            Log.v(TAG, String.format("prepare_surface_encoder:(%d,%d),mime=%s,frame_rate=%d,bitrate=%d", mWidth, mHeight, mime, frame_rate, bitrate));
 
         mTrackIndex = -1;
         mMuxerStarted = mIsEOS = false;
@@ -92,17 +94,18 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
         mMediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         // get Surface for encoder input
         // this method only can call between #configure and #start
-        return mMediaCodec.createInputSurface();	// API >= 18
+        return mMediaCodec.createInputSurface();    // API >= 18
     }
 
     protected int calcBitRate(final int frameRate) {
-        final int bitrate = (int)(BPP * frameRate * mWidth * mHeight);
+        final int bitrate = (int) (BPP * frameRate * mWidth * mHeight);
         Log.i(TAG, String.format("bitrate=%5.2f[Mbps]", bitrate / 1024f / 1024f));
         return bitrate;
     }
 
     /**
      * select the first codec that match a specific MIME type
+     *
      * @param mimeType
      * @return null if no codec matched
      */
@@ -115,7 +118,7 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
         for (int i = 0; i < numCodecs; i++) {
             final MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
 
-            if (!codecInfo.isEncoder()) {	// skipp decoder
+            if (!codecInfo.isEncoder()) {    // skipp decoder
                 continue;
             }
             // select first codec that match a specific MIME type and color format
@@ -135,6 +138,7 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
 
     /**
      * select color format available on specific codec and we can use.
+     *
      * @return 0 if no colorFormat is matched
      */
     protected static final int selectColorFormat(final MediaCodecInfo codecInfo, final String mimeType) {
@@ -165,12 +169,13 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
      * color formats that we can use in this class
      */
     protected static int[] recognizedFormats;
+
     static {
-        recognizedFormats = new int[] {
+        recognizedFormats = new int[]{
 //        	MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar,
 //        	MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar,
 //        	MediaCodecInfo.CodecCapabilities.COLOR_QCOM_FormatYUV420SemiPlanar,
-                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface,
+            MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface,
         };
     }
 
@@ -188,7 +193,7 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
     @Override
     protected void signalEndOfInputStream() {
         if (DEBUG) Log.d(TAG, "sending EOS to encoder");
-        mMediaCodec.signalEndOfInputStream();	// API >= 18
+        mMediaCodec.signalEndOfInputStream();    // API >= 18
         mIsEOS = true;
     }
 

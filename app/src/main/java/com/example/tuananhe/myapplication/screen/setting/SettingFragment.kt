@@ -1,7 +1,5 @@
 package com.example.tuananhe.myapplication.screen.setting
 
-import android.os.Environment
-import android.util.Log
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.evenBus.Event
@@ -10,12 +8,12 @@ import com.example.tuananhe.myapplication.utils.Constant.Companion.MBPS
 import com.example.tuananhe.myapplication.utils.Settings
 import com.example.tuananhe.myapplication.utils.view.dialog.BitrateDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.FpsDialog
+import com.example.tuananhe.myapplication.utils.view.dialog.LocationDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.ResolutionDialog
 import kotlinx.android.synthetic.main.fragment_setting.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import kotlin.math.log
 
 class SettingFragment : BaseFragment() {
 
@@ -25,12 +23,11 @@ class SettingFragment : BaseFragment() {
         constrain_resolution.setOnClickListener { showResolution() }
         constrain_fps.setOnClickListener { showFps() }
         constrain_quality.setOnClickListener { showBitrate() }
+        constrain_location.setOnClickListener { changeLocation() }
         constrain_audio.setOnClickListener { changeRecordAudio(!switch_audio.isChecked) }
         constrain_control.setOnClickListener { changeShowControl(!switch_control.isChecked) }
         switch_audio.setOnClickListener {  changeRecordAudio(switch_audio.isChecked) }
         switch_control.setOnClickListener { changeShowControl(switch_control.isChecked) }
-
-        Log.d("=========="  , "${Environment.getExternalStorageDirectory().canonicalPath} ")
     }
 
     private fun showResolution() {
@@ -66,6 +63,13 @@ class SettingFragment : BaseFragment() {
         Settings.saveSetting(settings)
     }
 
+    private fun changeLocation() {
+        context?.let { it ->
+            val dialog = LocationDialog(it)
+            dialog.show()
+        }
+    }
+
     private fun getSetting() {
         val settings = Settings.getSetting()
         text_resolution.text = settings.resolution.toString()
@@ -73,6 +77,7 @@ class SettingFragment : BaseFragment() {
         text_quality.text = "${settings.bitrate / MBPS} Mbps"
         switch_audio.isChecked = settings.isRecordAudio
         switch_control.isChecked = settings.isShowControl
+        text_location.text = settings.rootDirectory
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

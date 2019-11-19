@@ -21,6 +21,7 @@ class Settings {
         var DEFAULT_ROOT_DIRECTORY =
             (Environment.getExternalStorageDirectory() as File).canonicalPath.plus("/MoonRecord")
         var DEFAULT_VIDEO_DIRECTORY = DEFAULT_ROOT_DIRECTORY.plus("/video")
+        var SDCARD_VIDEO_DIRECTORY = App.getSDCardRoot()
 
         private val gson = Gson()
 

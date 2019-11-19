@@ -44,5 +44,6 @@
     <string name="show_control">Show the record window when record</string>
     <string name="select_bitrate">Select bitrate</string>
     <string name="select_fps">Select frame rate</string>
+    <string name="select_location">Select the storage location</string>
 
 </resources>

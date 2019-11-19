@@ -130,7 +130,7 @@ public class MediaScreenEncoder extends MediaVideoEncoderBase {
             mDrawer = new GLDrawer2D(true);
             mTexId = mDrawer.initTex();
             mSourceTexture = new SurfaceTexture(mTexId);
-            mSourceTexture.setDefaultBufferSize(screenPoint.x, screenPoint.y);	// これを入れないと映像が取れない
+            mSourceTexture.setDefaultBufferSize(mWidth, mHeight);	// これを入れないと映像が取れない
             mSourceSurface = new Surface(mSourceTexture);
             mSourceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener, mHandler);
             mEncoderSurface = getEgl().createFromSurface(mSurface);
@@ -139,7 +139,7 @@ public class MediaScreenEncoder extends MediaVideoEncoderBase {
             intervals = (long)(1000f / fps);
             display = mMediaProjection.createVirtualDisplay(
                     "Capturing Display",
-                    screenPoint.x, screenPoint.y, mDensity,
+                    mWidth, mHeight, mDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mSourceSurface, mCallback, mHandler);
             if (DEBUG) Log.v(TAG,  "screen capture loop:display=" + display);

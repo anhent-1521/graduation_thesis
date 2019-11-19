@@ -53,10 +53,7 @@ class FileUtil {
         }
 
         fun checkIfHaveSDCard(): Boolean {
-            val isSDPresent =
-                Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
-            val isSDSupportedDevice = Environment.isExternalStorageRemovable()
-            return isSDSupportedDevice && isSDPresent
+            return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
         }
     }
 }
