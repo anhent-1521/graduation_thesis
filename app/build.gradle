@@ -55,6 +55,10 @@ dependencies {
 
     //FFmpeg
     implementation 'com.writingminds:FFmpegAndroid:0.3.2'
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
+
+
+    implementation 'com.crystal:crystalrangeseekbar:1.1.3'
 
 }
 repositories {

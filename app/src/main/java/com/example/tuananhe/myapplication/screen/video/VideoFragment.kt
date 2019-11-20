@@ -11,6 +11,7 @@ import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.evenBus.Event
 import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
+import com.example.tuananhe.myapplication.screen.edit.choose.ChooseEditActivity
 import com.example.tuananhe.myapplication.screen.edit_video.EditVideoActivity
 import com.example.tuananhe.myapplication.utils.*
 import com.example.tuananhe.myapplication.utils.Constant.Companion.COMMON_PERMISSION
@@ -103,7 +104,7 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     }
 
     override fun goToEditVideo(video: Video) {
-        startActivity((EditVideoActivity.getEditVideoActivityIntent(context, video)))
+        startActivity(getVideoActivityIntent(context, video, ChooseEditActivity::class.java))
     }
 
     override fun showRemindPermission() {
@@ -133,6 +134,9 @@ class VideoFragment : BaseFragment(), VideoContract.View {
             }
             Constant.STOP_RECORD -> {
                 isRecording = false
+                onGetVideo()
+            }
+            Constant.LOCATION_CHANGED -> {
                 onGetVideo()
             }
         }

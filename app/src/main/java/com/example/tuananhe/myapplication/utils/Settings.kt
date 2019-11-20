@@ -14,24 +14,26 @@ import java.io.File
 class Settings {
 
     companion object {
-        const val DEFAULT_FPS = 30
-        const val DEFAULT_BITRATE = 0
-        val DEFAULT_RESOLUTION = Resolution.R720P
-        const val DEFAULT_COUNT_DOWN = 3
+        private const val DEFAULT_FPS = 30
+        private const val DEFAULT_BITRATE = 0
+        private val DEFAULT_RESOLUTION = Resolution.R720P
+        private const val DEFAULT_COUNT_DOWN = 3
         var DEFAULT_ROOT_DIRECTORY =
-            (Environment.getExternalStorageDirectory() as File).canonicalPath.plus("/MoonRecord")
+                (Environment.getExternalStorageDirectory() as File).canonicalPath.plus("/MoonRecord")
         var DEFAULT_VIDEO_DIRECTORY = DEFAULT_ROOT_DIRECTORY.plus("/video")
         var SDCARD_VIDEO_DIRECTORY = App.getSDCardRoot()
 
         private val gson = Gson()
 
         private fun getSharedPreferences(): SharedPreferences =
-            App.instance.getSharedPreferences(Constant.SETTING_PREF, Context.MODE_PRIVATE)
+                App.instance.getSharedPreferences(Constant.SETTING_PREF, Context.MODE_PRIVATE)
 
-        fun saveSetting(setting: Settings) {
+        fun saveSetting(setting: Settings, isDispatch: Boolean = true) {
             val preference = getSharedPreferences()
             preference.edit().putString(Constant.SETTING, Gson().toJson(setting)).apply()
-            EventBus.getDefault().post(Event(Constant.SETTING_CHANGED))
+            if (isDispatch) {
+                EventBus.getDefault().post(Event(Constant.SETTING_CHANGED))
+            }
         }
 
         private fun getSavedSetting(): Settings? {
