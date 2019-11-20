@@ -2,6 +2,7 @@ package com.example.tuananhe.myapplication.screen.video
 
 import android.media.MediaMetadataRetriever
 import android.os.Build
+import android.util.Log
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.AppUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
@@ -93,6 +94,8 @@ class VideoPresenter(private var view: VideoContract.View) : VideoContract.Prese
                 val path = file.path
 
                 val videoDuration = if (duration == null) 0 else duration.toLong() / 1000
+                Log.d("=========", duration.toString())
+                Log.d("=========", videoDuration.toString())
                 val videoWidth = width?.toInt() ?: 0
                 val videoHeight = height?.toInt() ?: 0
                 val video = Video(

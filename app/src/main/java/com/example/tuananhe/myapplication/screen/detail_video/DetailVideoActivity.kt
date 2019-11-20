@@ -25,7 +25,6 @@ class DetailVideoActivity : BaseActivity() {
 
     companion object {
         const val CONTROL_DELAY = 3000L
-        const val SECOND_UNIT = 1000L
         const val VIDEO_EXTRA = "video"
 
         fun getDetailVideoActivityIntent(context: Context?, video: Video): Intent {
@@ -127,8 +126,6 @@ class DetailVideoActivity : BaseActivity() {
         screenHeight = screenPoint.y
         screenRatio = screenWidth / screenHeight.toFloat()
 
-        Log.d("======", "$${video?.width ?: 0}")
-        Log.d("======", "$${video?.height ?: 0}")
         realWidth = video?.width ?: screenWidth
         realHeight = video?.height ?: screenHeight
         realRatio = realWidth / realHeight.toFloat()

@@ -26,7 +26,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:allowBackup">
         <activity
             android:name=".screen.main.HomeActivity"
             android:launchMode="singleTask"
@@ -51,6 +52,15 @@
             android:launchMode="singleInstance"
             android:theme="@style/Transparent" />
         <activity android:name=".screen.edit_video.EditVideoActivity" />
+
+        <activity
+            android:name=".screen.edit.choose.ChooseEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".screen.edit.trim.TrimActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

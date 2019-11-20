@@ -17,4 +17,5 @@
     <color name="color_light_shadow">#61C5B9B9</color>
     <color name="color_overlay">#80000000</color>
     <color name="transparent">#00000000</color>
+    <color name="yellow">#FFEB3B</color>
 </resources>

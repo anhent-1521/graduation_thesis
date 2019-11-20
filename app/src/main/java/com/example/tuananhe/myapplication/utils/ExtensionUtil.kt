@@ -9,6 +9,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
+import android.widget.TextView
 import com.example.tuananhe.myapplication.R
 import kotlinx.android.synthetic.main.dialog_common.*
 
@@ -52,7 +53,7 @@ class ExtensionUtil {
                 .setListener(null)
     }
 
-    fun Button.onTouchChangeStyle(context: Context, downColor: Int, upColor: Int, downDrawable: Int, upDrawable: Int) {
+    fun TextView.onTouchChangeStyle(context: Context, downColor: Int, upColor: Int, downDrawable: Int, upDrawable: Int) {
         setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -68,12 +69,12 @@ class ExtensionUtil {
         }
     }
 
-    fun Button.changePrimaryStyle(context: Context) {
+    fun TextView.changePrimaryStyle(context: Context, downDrawable: Int = R.drawable.bg_dialog_optimistic_press) {
         onTouchChangeStyle(
                 context,
                 R.color.color_white,
                 R.color.colorPrimary,
-                R.drawable.bg_dialog_optimistic_press,
+                downDrawable,
                 R.drawable.bg_dialog_optimistic_idle
         )
     }

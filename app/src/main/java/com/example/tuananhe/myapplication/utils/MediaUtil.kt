@@ -1,7 +1,7 @@
 package com.example.tuananhe.myapplication.utils
 
-import android.media.AudioFormat
-import android.media.AudioFormat.*
+import android.media.AudioFormat.CHANNEL_IN_MONO
+import android.media.AudioFormat.ENCODING_DEFAULT
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.net.ParseException
