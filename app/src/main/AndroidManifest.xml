@@ -52,6 +52,11 @@
             android:theme="@style/Transparent" />
         <activity android:name=".screen.edit_video.EditVideoActivity" />
 
+        <activity
+            android:name=".screen.edit.choose.ChooseEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/DetailImageTheme" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.file.provider"
