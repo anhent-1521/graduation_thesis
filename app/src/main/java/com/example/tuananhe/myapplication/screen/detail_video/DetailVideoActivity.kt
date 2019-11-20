@@ -127,6 +127,8 @@ class DetailVideoActivity : BaseActivity() {
         screenHeight = screenPoint.y
         screenRatio = screenWidth / screenHeight.toFloat()
 
+        Log.d("======", "$${video?.width ?: 0}")
+        Log.d("======", "$${video?.height ?: 0}")
         realWidth = video?.width ?: screenWidth
         realHeight = video?.height ?: screenHeight
         realRatio = realWidth / realHeight.toFloat()
@@ -171,9 +173,9 @@ class DetailVideoActivity : BaseActivity() {
 
     private fun setVideoSize() {
         val param = video_view.layoutParams
-        if (realWidth >= param.width && realWidth >= param.height) {
-            return
-        }
+//        if (realWidth >= param.width && realWidth >= param.height) {
+//            return
+//        }
         if (realWidth >= realHeight) {
             if (realHeight >= screenHeight) {
                 param.width = if (realWidth >= screenWidth) screenWidth else realWidth

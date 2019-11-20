@@ -1,12 +1,14 @@
 package com.example.tuananhe.myapplication.service.record
 
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 
 interface RecordContract {
 
     interface View {
-        fun provideContext(): Context
+        fun provideContext(): Service
+        fun exitRecord()
     }
 
     interface Presenter {
