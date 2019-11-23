@@ -7,8 +7,11 @@ import android.widget.Toast
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.MediaUtil
+import com.example.tuananhe.myapplication.utils.Settings
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import java.io.File
+import java.lang.Long
 import java.text.SimpleDateFormat
 
 class Presenter(private val view: Contract.View) : Contract.Presenter {
@@ -18,13 +21,16 @@ class Presenter(private val view: Contract.View) : Contract.Presenter {
     private var duration = 0
     private var mSourcePath = ""
     private lateinit var video: Video
-    val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+    var path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             .toString() + Constant.VIDEO_FOLDER + "/" + System.currentTimeMillis() + ".mp4"
 
     private lateinit var ffmpeg: FFmpeg
 
     override fun initFFmpeg() {
         ffmpeg = FFmpeg.getInstance(view.getContext())
+        val outputFile = File(Settings.getSetting().rootDirectory, "Edited-"
+                + Long.toHexString(System.currentTimeMillis()) + ".mp4")
+        path = outputFile.canonicalPath
     }
 
     override fun onGetVideo(video: Video) {
@@ -35,12 +41,12 @@ class Presenter(private val view: Contract.View) : Contract.Presenter {
     override fun trimVideo() {
 
 
-        val cmd = arrayOf("-i", mSourcePath, "-ss", startTime.toString(),
-                "-t", duration.toString(), "-c", "copy", "-preset", "ultrafast", path)
+        val cmd = arrayOf("-i", mSourcePath, "-ss", "2",
+                "-t", "12", "-c", "copy", "-preset", "ultrafast", path)
         ffmpeg.execute(cmd, object : ExecuteBinaryResponseHandler() {
 
             override fun onStart() {
-                Log.w("onStart", "Ffmpeg start  ${cmd.sortedArray()}")
+                Log.w("onStart", "Ffmpeg start  ${cmd.toList().toString()}")
                 view.showLoading()
             }
 

@@ -26,7 +26,7 @@ class SettingFragment : BaseFragment() {
         constrain_location.setOnClickListener { changeLocation() }
         constrain_audio.setOnClickListener { changeRecordAudio(!switch_audio.isChecked) }
         constrain_control.setOnClickListener { changeShowControl(!switch_control.isChecked) }
-        switch_audio.setOnClickListener {  changeRecordAudio(switch_audio.isChecked) }
+        switch_audio.setOnClickListener { changeRecordAudio(switch_audio.isChecked) }
         switch_control.setOnClickListener { changeShowControl(switch_control.isChecked) }
     }
 
@@ -74,16 +74,19 @@ class SettingFragment : BaseFragment() {
         val settings = Settings.getSetting()
         text_resolution.text = settings.resolution.toString()
         text_fps.text = "${settings.fps} fps"
-        text_quality.text = "${settings.bitrate / MBPS} Mbps"
+        text_quality.text = getBirate(settings)
         switch_audio.isChecked = settings.isRecordAudio
         switch_control.isChecked = settings.isShowControl
         text_location.text = settings.rootDirectory
     }
 
+    private fun getBirate(settings: Settings): String =
+            if (settings.bitrate == 0) "Auto" else "${settings.bitrate / MBPS} Mbps"
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: Event) {
         when (event.action) {
-            Constant.SETTING_CHANGED -> {
+            Constant.SETTING_CHANGED, Constant.LOCATION_CHANGED -> {
                 getSetting()
             }
         }

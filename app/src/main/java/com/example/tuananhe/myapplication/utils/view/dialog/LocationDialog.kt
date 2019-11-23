@@ -3,9 +3,12 @@ package com.example.tuananhe.myapplication.utils.view.dialog
 import android.content.Context
 import android.support.v7.app.AlertDialog
 import com.example.tuananhe.myapplication.R
+import com.example.tuananhe.myapplication.evenBus.Event
+import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.Settings
 import com.example.tuananhe.myapplication.utils.Settings.Companion.DEFAULT_VIDEO_DIRECTORY
 import com.example.tuananhe.myapplication.utils.Settings.Companion.SDCARD_VIDEO_DIRECTORY
+import org.greenrobot.eventbus.EventBus
 
 class LocationDialog (context: Context) : BaseSettingDialog(context) {
 
@@ -27,7 +30,8 @@ class LocationDialog (context: Context) : BaseSettingDialog(context) {
                     dialog.dismiss()
                     val location = locations[which]
                     settings.rootDirectory = location
-                    Settings.saveSetting(settings)
+                    Settings.saveSetting(settings, false)
+                    EventBus.getDefault().post(Event(Constant.LOCATION_CHANGED))
                 }
                 .setPositiveButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
 

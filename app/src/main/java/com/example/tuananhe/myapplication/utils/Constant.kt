@@ -35,6 +35,7 @@ class Constant {
         const val SETTING_PREF = "SETTING_PREF"
         const val SETTING = "SETTING"
         const val SETTING_CHANGED = "SETTING_CHANGED"
+        const val LOCATION_CHANGED = "LOCATION_CHANGED"
         const val MBPS = 1000000
 
     }
