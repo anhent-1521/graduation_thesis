@@ -11,7 +11,6 @@ import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
-import com.example.tuananhe.myapplication.screen.edit.preview.PreviewActivity
 import com.example.tuananhe.myapplication.screen.edit.preview.SpeedPreviewActivity
 import kotlinx.android.synthetic.main.activity_speed.*
 import kotlinx.android.synthetic.main.layout_progress_edit.*

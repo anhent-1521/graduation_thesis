@@ -69,9 +69,14 @@
             android:name=".screen.edit.speed.SpeedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".screen.edit.preview.SpeedPreviewActivity"
+        <activity
+            android:name=".screen.edit.preview.SpeedPreviewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/DetailImageTheme"/>
+            android:theme="@style/DetailImageTheme" />
+
+        <activity android:name=".screen.edit.rotate.RotateActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
