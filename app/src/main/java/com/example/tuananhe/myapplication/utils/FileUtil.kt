@@ -2,8 +2,11 @@ package com.example.tuananhe.myapplication.utils
 
 import android.content.Context
 import android.content.Intent
+import android.media.MediaMetadataRetriever
 import android.os.Environment
 import android.support.v4.content.FileProvider
+import android.util.Log
+import com.example.tuananhe.myapplication.data.model.Video
 import java.io.File
 
 class FileUtil {
@@ -54,6 +57,51 @@ class FileUtil {
 
         fun checkIfHaveSDCard(): Boolean {
             return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+        }
+
+        fun extractVideos(files: Array<File>): ArrayList<Video> {
+            val videos = ArrayList<Video>()
+            val metadataRetriever = MediaMetadataRetriever()
+            for (file in files) {
+                try {
+                    val video = extractVideo(metadataRetriever, file)
+                    if (video != null) {
+                        videos.add(video)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            return videos
+        }
+
+        fun extractVideo(metadataRetriever: MediaMetadataRetriever, file: File): Video? {
+            var video: Video? = null
+            try {
+                metadataRetriever.setDataSource(file.absolutePath)
+                val name = file.name
+                val duration =
+                        metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                val width =
+                        metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+                val height =
+                        metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+                val path = file.path
+
+                val videoDuration = if (duration == null) 0 else duration.toLong() / 1000
+                val videoWidth = width?.toInt() ?: 0
+                val videoHeight = height?.toInt() ?: 0
+                video = Video(
+                        name,
+                        path,
+                        videoDuration,
+                        videoWidth,
+                        videoHeight
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return video
         }
     }
 }

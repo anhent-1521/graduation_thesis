@@ -1,11 +1,10 @@
 package com.example.tuananhe.myapplication.screen.video
 
-import android.media.MediaMetadataRetriever
 import android.os.Build
-import android.util.Log
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.AppUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
+import com.example.tuananhe.myapplication.utils.FileUtil.Companion.extractVideos
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -78,39 +77,4 @@ class VideoPresenter(private var view: VideoContract.View) : VideoContract.Prese
         }
     }
 
-    private fun extractVideos(files: Array<File>): ArrayList<Video> {
-        val videos = ArrayList<Video>()
-        val metadataRetriever = MediaMetadataRetriever()
-        for (file in files) {
-            try {
-                metadataRetriever.setDataSource(file.absolutePath)
-                val name = file.name
-                val duration =
-                        metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                val width =
-                        metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
-                val height =
-                        metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
-                val path = file.path
-
-                val videoDuration = if (duration == null) 0 else duration.toLong() / 1000
-                Log.d("=========", duration.toString())
-                Log.d("=========", videoDuration.toString())
-                val videoWidth = width?.toInt() ?: 0
-                val videoHeight = height?.toInt() ?: 0
-                val video = Video(
-                        name,
-                        path,
-                        videoDuration,
-                        videoWidth,
-                        videoHeight
-                )
-                videos.add(video)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        metadataRetriever.release()
-        return videos
-    }
 }

@@ -1,13 +1,13 @@
-package com.example.tuananhe.myapplication.screen.edit.trim
+package com.example.tuananhe.myapplication.screen.edit.speed
 
-import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.util.Log
 import android.widget.Toast
 import com.example.tuananhe.myapplication.EditInfo
 import com.example.tuananhe.myapplication.data.model.Video
-import com.example.tuananhe.myapplication.utils.FileUtil.Companion.extractVideo
+import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
+import com.example.tuananhe.myapplication.utils.MediaUtil.Companion.isVideoHaveAudioTrack
 import com.example.tuananhe.myapplication.utils.Settings
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
@@ -15,17 +15,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.File
 import java.lang.Long
+import kotlin.math.log
 
-class TrimPresenter(val view: TrimContract.View) : TrimContract.Presenter {
+class SpeedPresenter(val view: SpeedContract.View) : SpeedContract.Presenter {
 
     private var ffmpeg: FFmpeg? = null
     private lateinit var video: Video
     private var setting: Settings? = null
-    private var desPath: String? = null
-    var sourcePath: String? = null
+    private var desPath: String = ""
+    var sourcePath: String = ""
 
     override fun initFFmpeg() {
         ffmpeg = FFmpeg.getInstance(view.provideContext())
@@ -37,45 +37,31 @@ class TrimPresenter(val view: TrimContract.View) : TrimContract.Presenter {
 
     override fun getVideo(video: Video) {
         this.video = video
-        sourcePath = video.path
-    }
-
-    private fun getBitmaps(video: Video): ArrayList<Bitmap> {
-        var retriever: FFmpegMediaMetadataRetriever? = null
-        val bitmaps = ArrayList<Bitmap>()
-        try {
-            retriever = FFmpegMediaMetadataRetriever()
-            retriever.setDataSource(video.path)
-            for (i in 0..10) {
-                var timeUs = i * video.duration * 100000
-                if (timeUs == 0L) {
-                    timeUs = 100000L
-                }
-                val bitmap = retriever.getFrameAtTime(timeUs,
-                        FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC)
-                if (bitmap != null) {
-                    bitmaps.add(bitmap)
-                }
-            }
-        } catch (e: IllegalArgumentException) {
-        }
-        retriever?.release()
-        return bitmaps
-    }
-
-    override fun getListBitmap(video: Video) {
-        var bitmaps: ArrayList<Bitmap>
-        CoroutineScope(Dispatchers.IO).launch {
-            bitmaps = getBitmaps(video)
-            withContext(Dispatchers.Main) {
-                view.onGetListBitMap(bitmaps)
-            }
-        }
+        sourcePath = video.path.toString()
     }
 
     override fun doEdit(editInfo: EditInfo) {
-        val cmd = arrayOf("-i", sourcePath, "-ss", editInfo.start,
-                "-t", editInfo.duration, "-c", "copy", "-preset", "ultrafast", desPath)
+        val audioSpeed = editInfo.speed?.toFloat() ?: 1f
+        val speed = 1 / audioSpeed
+
+        val videoSpeed = "[0:v]setpts=$speed*PTS[v]"
+        val hasAudio = isVideoHaveAudioTrack(video.path.toString())
+        val speedExecute = if (hasAudio) {
+            val audioSpeed1 = "[0:a]atempo=$audioSpeed[a]"
+            "$videoSpeed;$audioSpeed1"
+        } else {
+            videoSpeed
+        }
+
+        val cmd: Array<String>
+        cmd = if (hasAudio) {
+            arrayOf("-i", sourcePath, "-filter_complex", speedExecute,
+                    "-map", "[v]", "-map", "[a]", "-vsync", "2", "-preset", "ultrafast", desPath)
+        } else {
+            arrayOf("-i", sourcePath, "-filter_complex", speedExecute,
+                    "-map", "[v]", "-vsync", "2", "-preset", "ultrafast", desPath)
+        }
+        val duration = video.duration * speed
         ffmpeg?.execute(cmd, object : ExecuteBinaryResponseHandler() {
 
             override fun onStart() {
@@ -87,11 +73,12 @@ class TrimPresenter(val view: TrimContract.View) : TrimContract.Presenter {
 
                 if (message!!.indexOf("time=") != -1) {
                     val time = MediaUtil.extractTime(message)
-                    var percent = (time * 1.0f / video.duration * 100).toInt()
+                    Log.w("onProgressonProgrs", "$time")
+                    var percent = (time * 1.0f / duration * 100).toInt()
                     if (percent >= 100) {
                         percent = 99
                     }
-                    Log.w("onProgressonProgrs", "$percent")
+//                    Log.w("onProgressonProgrs", "$percent")
                     view.updateProgress(percent)
                 }
             }
@@ -115,27 +102,25 @@ class TrimPresenter(val view: TrimContract.View) : TrimContract.Presenter {
         })
     }
 
-    override fun previewEditVideo() {
-        val file = File(desPath)
-        var video: Video?
-        val metadataRetriever = MediaMetadataRetriever()
-        CoroutineScope(Dispatchers.IO).launch {
-            video = extractVideo(metadataRetriever, file)
-            metadataRetriever.release()
-            withContext(Dispatchers.Main) {
-                view.onSuccess(video)
-            }
-        }
-    }
-
     override fun cancel() {
         ffmpeg?.killRunningProcesses()
     }
-
 
     override fun onDestroy() {
         ffmpeg?.killRunningProcesses()
         ffmpeg = null
     }
 
+    override fun previewEditVideo() {
+        val file = File(desPath)
+        var video: Video?
+        val metadataRetriever = MediaMetadataRetriever()
+        CoroutineScope(Dispatchers.IO).launch {
+            video = FileUtil.extractVideo(metadataRetriever, file)
+            metadataRetriever.release()
+            withContext(Dispatchers.Main) {
+                view.onSuccess(video)
+            }
+        }
+    }
 }

@@ -14,10 +14,15 @@ abstract class BaseActivity : AppCompatActivity() {
         const val TITLE_COLOR_NONE = -1
         const val SECOND_UNIT = 1000L
         const val VIDEO_EXTRA = "video"
+        const val EDIT_INFO_EXTRA = "EDIT_INFO_EXTRA"
 
-        fun getVideoActivityIntent(context: Context?, video: Video, clazz: Class<out Activity>): Intent {
+        fun getVideoActivityIntent(context: Context?,
+                                   video: Video,
+                                   clazz: Class<out Activity>,
+                                   editInfo: EditInfo? = null): Intent {
             val intent = Intent(context, clazz)
             intent.putExtra(VIDEO_EXTRA, video)
+            intent.putExtra(EDIT_INFO_EXTRA, editInfo)
             return intent
         }
     }

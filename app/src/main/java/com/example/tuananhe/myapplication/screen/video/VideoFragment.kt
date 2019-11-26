@@ -1,8 +1,6 @@
 package com.example.tuananhe.myapplication.screen.video
 
 import android.Manifest
-import android.content.Intent
-import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -12,7 +10,6 @@ import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.evenBus.Event
 import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
 import com.example.tuananhe.myapplication.screen.edit.choose.ChooseEditActivity
-import com.example.tuananhe.myapplication.screen.edit_video.EditVideoActivity
 import com.example.tuananhe.myapplication.utils.*
 import com.example.tuananhe.myapplication.utils.Constant.Companion.COMMON_PERMISSION
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog

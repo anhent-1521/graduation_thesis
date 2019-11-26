@@ -1,10 +1,9 @@
-package com.example.tuananhe.myapplication.screen.detail_video
+package com.example.tuananhe.myapplication.screen.edit.preview
 
-import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Point
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Handler
 import android.util.Log
 import android.view.View
@@ -13,27 +12,21 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.SeekBar
 import com.example.tuananhe.myapplication.BaseActivity
-import com.example.tuananhe.myapplication.BaseFragment
+import com.example.tuananhe.myapplication.EditInfo
 import com.example.tuananhe.myapplication.R
+import com.example.tuananhe.myapplication.data.ItemEdit
 import com.example.tuananhe.myapplication.data.model.Video
-import com.example.tuananhe.myapplication.screen.edit.choose.ChooseEditActivity
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import kotlinx.android.synthetic.main.activity_detail_video.*
 
-class DetailVideoActivity : BaseActivity() {
+class SpeedPreviewActivity : BaseActivity() {
 
     companion object {
         const val CONTROL_DELAY = 3000L
         const val VIDEO_EXTRA = "video"
-
-        fun getDetailVideoActivityIntent(context: Context?, video: Video): Intent {
-            val intent = Intent(context, DetailVideoActivity::class.java)
-            intent.putExtra(VIDEO_EXTRA, video)
-            return intent
-        }
     }
 
     private var player: MediaPlayer? = null
@@ -62,11 +55,16 @@ class DetailVideoActivity : BaseActivity() {
     private var realWidth = 0
     private var realHeight = 0
     private var realRatio = 0f
+    private var editInfo: EditInfo = EditInfo(speed = "1")
+    private var editType: String = ItemEdit.SPEED
 
     override fun getLayoutResId(): Int = R.layout.activity_detail_video
 
     override fun initViews() {
         video = intent.getParcelableExtra(VIDEO_EXTRA)
+        editInfo = intent.getParcelableExtra(EDIT_INFO_EXTRA)
+        editType = editInfo.editType.toString()
+
         getSize()
         setScreenOrientation()
 
@@ -114,18 +112,6 @@ class DetailVideoActivity : BaseActivity() {
             }
             deleteVideo(video)
         }
-        image_edit.setOnClickListener {
-            player?.let { player ->
-                if (player.isPlaying) {
-                    onPlayPauseClicked()
-                }
-            }
-            video?.let {
-                startActivity(BaseFragment.getVideoActivityIntent(
-                        this, it, ChooseEditActivity::class.java))
-            }
-        }
-
     }
 
     override fun initComponents() {
@@ -174,6 +160,10 @@ class DetailVideoActivity : BaseActivity() {
         video_view?.setOnPreparedListener {
             player = it
             setVideoSize()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ItemEdit.SPEED == editType) {
+                val speed = editInfo.speed?.toFloat()
+                player?.playbackParams = it.playbackParams.setSpeed(speed ?: 1f)
+            }
             video_view.start()
             initControl()
             progressHandler.post(progressRunnable)
