@@ -16,7 +16,8 @@
         app:progressBackgroundColor="@color/color_white"
         app:progressColor="@color/colorPrimary"
         app:progressStrokeWidth="4dp"
-        app:textColor="@color/colorPrimary" />
+        app:textColor="@color/colorPrimary"
+        app:textSize="20sp"/>
 
     <TextView
         android:id="@+id/text_cancel"

@@ -1,9 +1,11 @@
 package com.example.tuananhe.myapplication.screen.edit.choose
 
+import android.app.Activity
 import com.example.tuananhe.myapplication.BaseEditActivity
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
+import com.example.tuananhe.myapplication.screen.edit.speed.SpeedActivity
 import com.example.tuananhe.myapplication.screen.edit.trim.TrimActivity
 import kotlinx.android.synthetic.main.activity_choose_edit.*
 
@@ -34,10 +36,10 @@ class ChooseEditActivity : BaseEditActivity() {
     }
 
     private fun gotoEdit(item: ItemEdit) {
+        var clazz: Class<out Activity> = TrimActivity::class.java
         when (item.title) {
             ItemEdit.TRIM -> {
-                startActivity(BaseFragment
-                        .getVideoActivityIntent(this, video, TrimActivity::class.java))
+                clazz = TrimActivity::class.java
             }
             ItemEdit.ADD_IMAGE -> {
 
@@ -55,8 +57,10 @@ class ChooseEditActivity : BaseEditActivity() {
 
             }
             ItemEdit.SPEED -> {
-
+                clazz = SpeedActivity::class.java
             }
         }
+        startActivity(BaseFragment
+                .getVideoActivityIntent(this, video, clazz))
     }
 }

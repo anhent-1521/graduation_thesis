@@ -447,7 +447,7 @@ public class CircularProgressIndicator extends View {
     }
 
     private void reformatProgressText() {
-        progressText = progressTextAdapter.formatText(progressValue);
+        progressText = progressTextAdapter.formatText(progressValue) + "%";
     }
 
     private Rect calculateTextBounds() {

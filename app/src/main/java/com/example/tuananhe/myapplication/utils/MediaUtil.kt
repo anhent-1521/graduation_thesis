@@ -3,6 +3,7 @@ package com.example.tuananhe.myapplication.utils
 import android.media.AudioFormat.CHANNEL_IN_MONO
 import android.media.AudioFormat.ENCODING_DEFAULT
 import android.media.AudioRecord
+import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.net.ParseException
 import android.text.format.DateUtils
@@ -83,6 +84,22 @@ class MediaUtil {
                 recorder.release()
             }
             return available
+        }
+
+        fun isVideoHaveAudioTrack(path: String): Boolean {
+            val audioTrack: Boolean
+
+            val retriever = MediaMetadataRetriever()
+            return try {
+                retriever.setDataSource(path)
+                val hasAudioStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO)
+                audioTrack = hasAudioStr == "yes"
+
+                audioTrack
+            } catch (e: RuntimeException) {
+                false
+            }
+
         }
     }
 }

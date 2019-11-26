@@ -8,6 +8,9 @@ import android.view.View
 import com.example.tuananhe.myapplication.BaseEditActivity
 import com.example.tuananhe.myapplication.EditInfo
 import com.example.tuananhe.myapplication.R
+import com.example.tuananhe.myapplication.data.ItemEdit
+import com.example.tuananhe.myapplication.data.model.Video
+import com.example.tuananhe.myapplication.screen.edit.preview.PreviewActivity
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.activity_trim.*
 import kotlinx.android.synthetic.main.layout_progress_edit.*
@@ -28,18 +31,20 @@ class TrimActivity : BaseEditActivity(), TrimContract.View {
     }
 
     override fun onClickCancel() {
+        presenter.cancel()
+        hideProgress()
     }
 
     override fun initView() {
         presenter.initFFmpeg()
-        range_seekbar.setOnRangeSeekbarChangeListener { minValue, maxValue ->
+        range_seekbar.setOnRangeSeekbarFinalValueListener { minValue, maxValue ->
             val min = minValue.toFloat()
             val max = maxValue.toFloat()
-            onSelectTime(min, max)
             if (player != null && !isComplete) {
                 val current = if (curMin == min) maxValue else minValue
                 player?.seekTo(current.toInt())
             }
+            onSelectTime(min, max)
             curMin = min
             curMax = max
         }
@@ -51,6 +56,12 @@ class TrimActivity : BaseEditActivity(), TrimContract.View {
     }
 
     override fun onClickPreview() {
+        Handler().postDelayed({
+            startActivity(getVideoActivityIntent(this,
+                    video,
+                    PreviewActivity::class.java,
+                    EditInfo(getTime(curMin), getTime(curMax), editType = ItemEdit.TRIM)))
+        }, 100)
     }
 
     @SuppressLint("SetTextI18n")
@@ -86,10 +97,13 @@ class TrimActivity : BaseEditActivity(), TrimContract.View {
         progress.setCurrentProgress(pro.toDouble())
     }
 
-    override fun onSuccess() {
-        Handler().postDelayed({
-            finish()
-        }, 100)
+    override fun onSuccess(video: Video?) {
+        if (video != null) {
+            Handler().postDelayed({
+                startActivity(getVideoActivityIntent(this, video, PreviewActivity::class.java))
+                finish()
+            }, 100)
+        }
     }
 
     @SuppressLint("SetTextI18n")

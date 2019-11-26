@@ -3,11 +3,17 @@ package com.example.tuananhe.myapplication
 import android.media.MediaPlayer
 import android.os.Handler
 import android.util.Log
+import android.widget.SeekBar
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.activity_choose_edit.*
+import kotlinx.android.synthetic.main.activity_choose_edit.image_play_pause
+import kotlinx.android.synthetic.main.activity_choose_edit.seekbar_progress
+import kotlinx.android.synthetic.main.activity_choose_edit.video_view
+import kotlinx.android.synthetic.main.activity_detail_video.*
 import kotlinx.android.synthetic.main.layout_header_edit.*
+import kotlinx.android.synthetic.main.layout_header_edit.image_back
 import kotlinx.android.synthetic.main.layout_progress_edit.*
 
 abstract class BaseEditActivity : BaseActivity() {
@@ -39,8 +45,24 @@ abstract class BaseEditActivity : BaseActivity() {
         text_preview.setOnClickListener { onClickPreview() }
         text_cancel.setOnClickListener { onClickCancel() }
         text_save.setOnClickListener { onClickSave() }
+        frame_progress.setOnClickListener {  }
         text_title.text = getEditTitle()
         progress.maxProgress = 100.toDouble()
+        seekbar_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (isComplete) {
+                    seekBar?.progress = seekBar?.max ?: 0
+                    return
+                }
+                video_view.seekTo(seekBar?.progress ?: 0)
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+        })
         initView()
     }
 
@@ -111,9 +133,7 @@ abstract class BaseEditActivity : BaseActivity() {
     }
 
     private fun updateProgress() {
-        Log.d("================", "aaaaaaaaaaaaaaaaaaaaaa"
-        )
-        val current = player?.currentPosition ?: 0
+        val current = video_view?.currentPosition ?: 0
         seekbar_progress.progress = current
         text_start.text = MediaUtil.getVideoDuration(current / SECOND_UNIT)
     }

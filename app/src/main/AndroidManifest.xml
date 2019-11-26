@@ -61,6 +61,17 @@
             android:name=".screen.edit.trim.TrimActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".screen.edit.preview.PreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/DetailImageTheme" />
+        <activity
+            android:name=".screen.edit.speed.SpeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".screen.edit.preview.SpeedPreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/DetailImageTheme"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
