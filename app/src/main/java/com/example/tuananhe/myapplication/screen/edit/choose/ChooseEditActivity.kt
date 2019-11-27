@@ -5,6 +5,7 @@ import com.example.tuananhe.myapplication.BaseEditActivity
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
+import com.example.tuananhe.myapplication.screen.edit.rotate.RotateActivity
 import com.example.tuananhe.myapplication.screen.edit.speed.SpeedActivity
 import com.example.tuananhe.myapplication.screen.edit.trim.TrimActivity
 import kotlinx.android.synthetic.main.activity_choose_edit.*
@@ -58,6 +59,9 @@ class ChooseEditActivity : BaseEditActivity() {
             }
             ItemEdit.SPEED -> {
                 clazz = SpeedActivity::class.java
+            }
+            ItemEdit.ROTATE -> {
+                clazz = RotateActivity::class.java
             }
         }
         startActivity(BaseFragment

@@ -55,7 +55,7 @@ class SpeedPresenter(val view: SpeedContract.View) : SpeedContract.Presenter {
 
         val cmd: Array<String>
         cmd = if (hasAudio) {
-            arrayOf("-i", sourcePath, "-filter_complex", speedExecute,
+            arrayOf("-i", sourcePath,"-c:v", "libx264", "-filter_complex", speedExecute,
                     "-map", "[v]", "-map", "[a]", "-vsync", "2", "-preset", "ultrafast", desPath)
         } else {
             arrayOf("-i", sourcePath, "-filter_complex", speedExecute,
@@ -65,31 +65,26 @@ class SpeedPresenter(val view: SpeedContract.View) : SpeedContract.Presenter {
         ffmpeg?.execute(cmd, object : ExecuteBinaryResponseHandler() {
 
             override fun onStart() {
-                Log.w("onStart", "Ffmpeg start  ${cmd.toList()}")
                 view.showProgress()
             }
 
             override fun onProgress(message: String?) {
-
+                Log.w("onProgressonProgrs", "$message")
                 if (message!!.indexOf("time=") != -1) {
                     val time = MediaUtil.extractTime(message)
-                    Log.w("onProgressonProgrs", "$time")
                     var percent = (time * 1.0f / duration * 100).toInt()
                     if (percent >= 100) {
                         percent = 99
                     }
-//                    Log.w("onProgressonProgrs", "$percent")
                     view.updateProgress(percent)
                 }
             }
 
             override fun onFailure(message: String?) {
-                Log.w("onFailure", "FFmpeg failure: " + message!!)
                 Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
             }
 
             override fun onSuccess(message: String?) {
-                Log.w("onSuccess", "FFmpeg success: " + message!!)
                 Toast.makeText(view.provideContext(), "Success", Toast.LENGTH_SHORT).show()
                 view.updateProgress(100)
                 previewEditVideo()
@@ -97,7 +92,6 @@ class SpeedPresenter(val view: SpeedContract.View) : SpeedContract.Presenter {
 
             override fun onFinish() {
                 view.hideProgress()
-                Log.w("onFinish", "FFmpeg finish")
             }
         })
     }

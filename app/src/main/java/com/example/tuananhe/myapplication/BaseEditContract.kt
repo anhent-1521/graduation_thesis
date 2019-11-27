@@ -26,10 +26,11 @@ interface Presenter {
 
 @Parcelize
 data class EditInfo(
-        val start: String? = null,
-        val end: String? = null,
-        val duration: String? = null,
-        val speed: String? = null,
-        val editType: String? = null
+        val start: String = "",
+        val end: String = "",
+        val duration: String = "",
+        val speed: String = "",
+        val rotate: String = "",
+        val editType: String = ""
 ) : Parcelable
 
