@@ -19,18 +19,11 @@ import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
-import kotlinx.android.synthetic.main.activity_detail_video.constraint_parent
-import kotlinx.android.synthetic.main.activity_detail_video.image_back
-import kotlinx.android.synthetic.main.activity_detail_video.image_delete
+import kotlinx.android.synthetic.main.activity_detail_video.*
 import kotlinx.android.synthetic.main.activity_detail_video.image_play_pause
-import kotlinx.android.synthetic.main.activity_detail_video.image_share
-import kotlinx.android.synthetic.main.activity_detail_video.linear_progress
-import kotlinx.android.synthetic.main.activity_detail_video.linear_top
 import kotlinx.android.synthetic.main.activity_detail_video.seekbar_progress
-import kotlinx.android.synthetic.main.activity_detail_video.text_current
-import kotlinx.android.synthetic.main.activity_detail_video.text_duration
 import kotlinx.android.synthetic.main.activity_detail_video.video_view
-import kotlinx.android.synthetic.main.activity_preview.*
+import kotlinx.android.synthetic.main.activity_rotate.*
 
 class PreviewActivity : BaseActivity() {
 
@@ -40,8 +33,6 @@ class PreviewActivity : BaseActivity() {
 
     private var player: MediaPlayer? = null
     private var video: Video? = null
-    private var editInfo: EditInfo? = null
-    private var editType: String? = null
     private var isComplete = false
     private var progressRunnable = object : Runnable {
         override fun run() {
@@ -66,15 +57,20 @@ class PreviewActivity : BaseActivity() {
     private var realWidth = 0
     private var realHeight = 0
     private var realRatio = 0f
+    private var editInfo: EditInfo = EditInfo(speed = "1")
+    private var editType: String = ItemEdit.TRIM
+    private var start = 0
+    private var end = 0
 
-    override fun getLayoutResId(): Int = R.layout.activity_preview
+    override fun getLayoutResId(): Int = R.layout.activity_detail_video
 
     override fun initViews() {
         video = intent.getParcelableExtra(VIDEO_EXTRA)
         editInfo = intent.getParcelableExtra(EDIT_INFO_EXTRA)
-        if (editInfo != null) {
-            editType = editInfo?.editType
-        }
+        editType = editInfo.editType
+        start = editInfo.start.toInt() * 1000
+        end = editInfo.end.toInt() * 1000
+
         getSize()
         setScreenOrientation()
 
@@ -104,7 +100,6 @@ class PreviewActivity : BaseActivity() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             }
         })
-        text_name.text = video?.name
 
         image_back.setOnClickListener { onBackPressed() }
         image_share.setOnClickListener {
@@ -171,10 +166,7 @@ class PreviewActivity : BaseActivity() {
         video_view?.setOnPreparedListener {
             player = it
             setVideoSize()
-            video_view.start()
-            if (editType != null && editType == ItemEdit.TRIM) {
-                player?.seekTo(editInfo?.start?.toInt() ?: 0)
-            }
+            setStartPosition()
             initControl()
             progressHandler.post(progressRunnable)
             controlHandler.postDelayed(controlRunnable, CONTROL_DELAY)
@@ -182,9 +174,26 @@ class PreviewActivity : BaseActivity() {
         }
     }
 
+    private fun setStartPosition() {
+        if (editType == ItemEdit.TRIM) {
+            player?.seekTo(start)
+            player?.setOnSeekCompleteListener {
+                video_view.seekTo(start)
+                video_view.start()
+            }
+        }
+    }
+
+    private fun setEndPosition() {
+        if (editType == ItemEdit.TRIM && player!!.currentPosition >= end) {
+            player?.seekTo(start)
+            player?.pause()
+            image_play_pause.setBackgroundResource(R.drawable.bg_play)
+        }
+    }
+
     private fun setVideoSize() {
         val param = video_view.layoutParams
-
         if (realWidth >= realHeight) {
             if (realHeight >= screenHeight) {
                 param.width = if (realWidth >= screenWidth) screenWidth else realWidth
@@ -210,13 +219,10 @@ class PreviewActivity : BaseActivity() {
         video_view.layoutParams = param
     }
 
-    private fun initControl() {var duration = video?.duration ?: 0
-        if (editType != null && editType == ItemEdit.TRIM) {
-            duration = editInfo?.end?.toLong()?.minus(editInfo?.start?.toLong()!!) ?: duration
-        }
-        seekbar_progress.max = duration.toInt()
-        Log.d("-----------", player!!.duration.toString())
-        text_duration.text = MediaUtil.getVideoDuration(duration)
+    private fun initControl() {
+        val max = end - start
+        seekbar_progress.max = max
+        text_duration.text = MediaUtil.getVideoDuration(max / 1000.toLong())
         image_play_pause.setBackgroundResource(R.drawable.bg_pause)
         image_play_pause.visibility = VISIBLE
     }
@@ -286,15 +292,10 @@ class PreviewActivity : BaseActivity() {
     }
 
     private fun updateProgress() {
-        var current = player?.currentPosition ?: 0
-        if (editType != null && editType == ItemEdit.TRIM) {
-            if (current >= (editInfo?.end?.toInt() ?: video_view.duration)) {
-//                player?.seekTo(editInfo?.start?.toInt() ?: 0)
-                player?.playbackParams
-            }
-        }
+        setEndPosition()
+        var current = player!!.currentPosition - start
+        if (current < 0) current = 0
         seekbar_progress.progress = current
-        Log.d("-----------", current.toString())
         text_current.text = MediaUtil.getVideoDuration(current / SECOND_UNIT)
     }
 

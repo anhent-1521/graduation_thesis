@@ -1,5 +1,6 @@
 package com.example.tuananhe.myapplication.screen.edit.rotate
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.SurfaceTexture
 import android.media.MediaPlayer
@@ -72,7 +73,11 @@ class RotateActivity : BaseActivity(), RotateContract.View,
         playVideo(surface)
     }
 
+    override fun getTitleBarColorId(): Int = R.color.colorPrimary
+
+    @SuppressLint("SetTextI18n")
     override fun initViews() {
+        text_title.text = "Rotate Video"
         presenter.initFFmpeg()
         with(ExtensionUtil()) {
             text_rotate.changePrimaryStyle(this@RotateActivity)

@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginBottom="8dp"
-                    android:text="00:21"
+                    android:text="00:00"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintBottom_toTopOf="@+id/slide_image"
                     app:layout_constraintStart_toStartOf="parent" />

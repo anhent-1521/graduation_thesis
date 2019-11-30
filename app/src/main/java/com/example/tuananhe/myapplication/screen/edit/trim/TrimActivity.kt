@@ -10,6 +10,7 @@ import com.example.tuananhe.myapplication.EditInfo
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
 import com.example.tuananhe.myapplication.data.model.Video
+import com.example.tuananhe.myapplication.screen.detail_video.DetailVideoActivity
 import com.example.tuananhe.myapplication.screen.edit.preview.PreviewActivity
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.activity_trim.*
@@ -18,16 +19,27 @@ import kotlinx.android.synthetic.main.layout_progress_edit.*
 class TrimActivity : BaseEditActivity(), TrimContract.View {
 
     private val presenter = TrimPresenter(this)
+    private var type: String = ItemEdit.TRIM
     private var curMin = 0F
     private var curMax = 0F
 
     override fun getLayoutResId(): Int = R.layout.activity_trim
 
-    override fun getEditTitle(): String = "Trim Video"
+    override fun getEditTitle(): String {
+        type = intent.getStringExtra(EDIT_TYPE)
+        return if (type == ItemEdit.TRIM) "Trim Video" else "Remove Middle"
+    }
 
     override fun onClickSave() {
-        presenter.doEdit(EditInfo(getTime(curMin),
-                duration = getTime(curMax - curMin)))
+        if (type == ItemEdit.TRIM) {
+            presenter.doEdit(EditInfo(getTime(curMin),
+                    duration = getTime(curMax - curMin),
+                    editType = type))
+        } else {
+            presenter.doEdit(EditInfo(getTime(curMin),
+                    duration = getTime(curMax),
+                    editType = type))
+        }
     }
 
     override fun onClickCancel() {
@@ -100,7 +112,7 @@ class TrimActivity : BaseEditActivity(), TrimContract.View {
     override fun onSuccess(video: Video?) {
         if (video != null) {
             Handler().postDelayed({
-                startActivity(getVideoActivityIntent(this, video, PreviewActivity::class.java))
+                startActivity(getVideoActivityIntent(this, video, DetailVideoActivity::class.java))
                 finish()
             }, 100)
         }

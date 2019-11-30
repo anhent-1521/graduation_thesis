@@ -19,11 +19,20 @@
         android:background="@color/color_black"
         android:orientation="vertical">
 
-        <VideoView
-            android:id="@+id/video_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:layout_gravity="center" />
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <VideoView
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,19 +86,20 @@
         <LinearLayout
             android:id="@+id/linear_edit"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/color_white"
+            android:gravity="center"
             android:orientation="vertical">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:paddingTop="32dp"
                 android:orientation="horizontal"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:paddingBottom="16dp"
+                android:layout_marginBottom="32dp"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
             <TextView
