@@ -15,10 +15,13 @@ abstract class BaseFragment : Fragment() {
 
     companion object{
         private const val VIDEO_EXTRA = "video"
+        private const val EDIT_TYPE = "EDIT_TYPE"
 
-        fun getVideoActivityIntent(context: Context?, video: Video, clazz: Class<out Activity>): Intent {
+        fun getVideoActivityIntent(context: Context?, video: Video,
+                                   clazz: Class<out Activity>, type: String = ""): Intent {
             val intent = Intent(context, clazz)
             intent.putExtra(VIDEO_EXTRA, video)
+            intent.putExtra(EDIT_TYPE, type)
             return intent
         }
     }

@@ -15,11 +15,12 @@ abstract class BaseActivity : AppCompatActivity() {
         const val SECOND_UNIT = 1000L
         const val VIDEO_EXTRA = "video"
         const val EDIT_INFO_EXTRA = "EDIT_INFO_EXTRA"
+        const val EDIT_TYPE = "EDIT_TYPE"
 
         fun getVideoActivityIntent(context: Context?,
                                    video: Video,
                                    clazz: Class<out Activity>,
-                                   editInfo: EditInfo? = null): Intent {
+                                   editInfo: EditInfo? = EditInfo()): Intent {
             val intent = Intent(context, clazz)
             intent.putExtra(VIDEO_EXTRA, video)
             intent.putExtra(EDIT_INFO_EXTRA, editInfo)

@@ -11,6 +11,7 @@ import com.example.tuananhe.myapplication.utils.MediaUtil.Companion.isVideoHaveA
 import com.example.tuananhe.myapplication.utils.Settings
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,45 +56,49 @@ class SpeedPresenter(val view: SpeedContract.View) : SpeedContract.Presenter {
 
         val cmd: Array<String>
         cmd = if (hasAudio) {
-            arrayOf("-i", sourcePath,"-c:v", "libx264", "-filter_complex", speedExecute,
+            arrayOf("-i", sourcePath, "-c:v", "libx264", "-filter_complex", speedExecute,
                     "-map", "[v]", "-map", "[a]", "-vsync", "2", "-preset", "ultrafast", desPath)
         } else {
             arrayOf("-i", sourcePath, "-filter_complex", speedExecute,
                     "-map", "[v]", "-vsync", "2", "-preset", "ultrafast", desPath)
         }
         val duration = video.duration * speed
-        ffmpeg?.execute(cmd, object : ExecuteBinaryResponseHandler() {
+        try {
+            ffmpeg?.execute(cmd, object : ExecuteBinaryResponseHandler() {
 
-            override fun onStart() {
-                view.showProgress()
-            }
-
-            override fun onProgress(message: String?) {
-                Log.w("onProgressonProgrs", "$message")
-                if (message!!.indexOf("time=") != -1) {
-                    val time = MediaUtil.extractTime(message)
-                    var percent = (time * 1.0f / duration * 100).toInt()
-                    if (percent >= 100) {
-                        percent = 99
-                    }
-                    view.updateProgress(percent)
+                override fun onStart() {
+                    view.showProgress()
                 }
-            }
 
-            override fun onFailure(message: String?) {
-                Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
-            }
+                override fun onProgress(message: String?) {
+                    Log.w("onProgressonProgrs", "$message")
+                    if (message!!.indexOf("time=") != -1) {
+                        val time = MediaUtil.extractTime(message)
+                        var percent = (time * 1.0f / duration * 100).toInt()
+                        if (percent >= 100) {
+                            percent = 99
+                        }
+                        view.updateProgress(percent)
+                    }
+                }
 
-            override fun onSuccess(message: String?) {
-                Toast.makeText(view.provideContext(), "Success", Toast.LENGTH_SHORT).show()
-                view.updateProgress(100)
-                previewEditVideo()
-            }
+                override fun onFailure(message: String?) {
+                    Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
+                }
 
-            override fun onFinish() {
-                view.hideProgress()
-            }
-        })
+                override fun onSuccess(message: String?) {
+                    Toast.makeText(view.provideContext(), "Success", Toast.LENGTH_SHORT).show()
+                    view.updateProgress(100)
+                    previewEditVideo()
+                }
+
+                override fun onFinish() {
+                    view.hideProgress()
+                }
+            })
+        } catch (e: FFmpegCommandAlreadyRunningException) {
+            e.printStackTrace()
+        }
     }
 
     override fun cancel() {

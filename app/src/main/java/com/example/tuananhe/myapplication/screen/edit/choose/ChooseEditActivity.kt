@@ -38,6 +38,7 @@ class ChooseEditActivity : BaseEditActivity() {
 
     private fun gotoEdit(item: ItemEdit) {
         var clazz: Class<out Activity> = TrimActivity::class.java
+        var type: String = item.title
         when (item.title) {
             ItemEdit.TRIM -> {
                 clazz = TrimActivity::class.java
@@ -52,7 +53,7 @@ class ChooseEditActivity : BaseEditActivity() {
 
             }
             ItemEdit.REMOVE_MIDDLE -> {
-
+                clazz = TrimActivity::class.java
             }
             ItemEdit.CROP -> {
 
@@ -65,6 +66,6 @@ class ChooseEditActivity : BaseEditActivity() {
             }
         }
         startActivity(BaseFragment
-                .getVideoActivityIntent(this, video, clazz))
+                .getVideoActivityIntent(this, video, clazz, type))
     }
 }
