@@ -36,9 +36,7 @@ public class RecordHelper implements MediaEncoder.MediaEncoderListener {
     }
 
     public void startRecord(Intent intent, int resultCode) {
-        if (mediaProjection == null) {
-            mediaProjection = projectionManager.getMediaProjection(resultCode, intent);
-        }
+        mediaProjection = projectionManager.getMediaProjection(resultCode, intent);
         startRecording();
     }
 
