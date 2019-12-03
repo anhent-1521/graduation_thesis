@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Moon Record</string>
     <string name="default_floatingview_channel_id">default_floatingview_channel</string>
     <string name="default_floatingview_channel_name">Default Channel</string>
 
