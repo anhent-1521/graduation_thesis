@@ -5,6 +5,7 @@ import com.example.tuananhe.myapplication.BaseEditActivity
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
+import com.example.tuananhe.myapplication.screen.edit.add_image.AddImageActivity
 import com.example.tuananhe.myapplication.screen.edit.rotate.RotateActivity
 import com.example.tuananhe.myapplication.screen.edit.speed.SpeedActivity
 import com.example.tuananhe.myapplication.screen.edit.trim.TrimActivity
@@ -44,7 +45,7 @@ class ChooseEditActivity : BaseEditActivity() {
                 clazz = TrimActivity::class.java
             }
             ItemEdit.ADD_IMAGE -> {
-
+                clazz = AddImageActivity::class.java
             }
             ItemEdit.ADD_INTRO -> {
 
