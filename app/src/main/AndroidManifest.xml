@@ -74,9 +74,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/DetailImageTheme" />
 
-        <activity android:name=".screen.edit.rotate.RotateActivity"
+        <activity
+            android:name=".screen.edit.rotate.RotateActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".screen.edit.merge_video.MergeVideoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.os.Environment
 import android.support.v4.content.FileProvider
+import android.text.TextUtils
 import android.util.Log
 import com.example.tuananhe.myapplication.data.model.Video
 import java.io.File
@@ -72,13 +73,18 @@ class FileUtil {
                     e.printStackTrace()
                 }
             }
+            metadataRetriever.release()
             return videos
         }
 
-        fun extractVideo(metadataRetriever: MediaMetadataRetriever, file: File): Video? {
+        fun extractVideo(metadataRetriever: MediaMetadataRetriever, file: File, path1: String = ""): Video? {
             var video: Video? = null
             try {
-                metadataRetriever.setDataSource(file.absolutePath)
+                if (TextUtils.isEmpty(path1)) {
+                    metadataRetriever.setDataSource(file.absolutePath)
+                } else {
+                    metadataRetriever.setDataSource(path1)
+                }
                 val name = file.name
                 val duration =
                         metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)

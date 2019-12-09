@@ -31,6 +31,8 @@ data class EditInfo(
         val duration: String = "",
         val speed: String = "",
         val rotate: String = "",
-        val editType: String = ""
+        val editType: String = "",
+        val introPath: String = "",
+        val outroPath: String = ""
 ) : Parcelable
 

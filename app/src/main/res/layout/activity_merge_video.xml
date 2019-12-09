@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linear_trim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="HardcodedText">
+
+        <include layout="@layout/layout_header_edit" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_black"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <VideoView
+                    android:id="@+id/video_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_default_text"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/image_play_pause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_resume_record" />
+
+                <TextView
+                    android:id="@+id/text_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_video_duration"
+                    android:paddingStart="3dp"
+                    android:paddingEnd="3dp"
+                    android:text="00:00"
+                    android:textColor="@color/color_white"
+                    android:textSize="12sp" />
+
+                <SeekBar
+                    android:id="@+id/seekbar_progress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:progress="100"
+                    android:progressDrawable="@drawable/seekbar_progress"
+                    android:thumb="@drawable/seekbar_thumb" />
+
+                <TextView
+                    android:id="@+id/text_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_video_duration"
+                    android:paddingStart="3dp"
+                    android:paddingEnd="3dp"
+                    android:textColor="@color/color_white"
+                    android:textSize="12sp"
+                    tools:text="08:21" />
+            </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/linear_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white"
+                android:paddingTop="16dp">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/constraint_intro"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@+id/constraint_outro"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/image_intro"
+                        android:layout_width="110dp"
+                        android:layout_height="70dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:riv_border_color="@color/color_light_gray"
+                        app:riv_border_width="1dp"
+                        app:riv_corner_radius="3dp"
+                        android:background="#50F44336" />
+
+                    <TextView
+                        android:id="@+id/text_duration_intro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/bg_video_duration"
+                        android:paddingStart="3dp"
+                        android:paddingTop="1dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="1dp"
+                        android:text="00:00"
+                        android:textColor="@color/color_white"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/image_intro"
+                        app:layout_constraintStart_toStartOf="@+id/image_intro" />
+
+                    <TextView
+                        android:id="@+id/text_name_intro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_video_duration"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingStart="3dp"
+                        android:paddingTop="1dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="1dp"
+                        android:text="00:00"
+                        android:visibility="visible"
+                        android:textColor="@color/color_white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/image_intro" />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/constraint_outro"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/constraint_intro"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/image_outro"
+                        android:layout_width="110dp"
+                        android:layout_height="70dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:riv_border_color="@color/color_light_gray"
+                        app:riv_border_width="1dp"
+                        app:riv_corner_radius="3dp"
+                        android:background="#50F44336" />
+
+                    <TextView
+                        android:id="@+id/text_duration_outro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/bg_video_duration"
+                        android:paddingStart="3dp"
+                        android:paddingTop="1dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="1dp"
+                        android:text="00:00"
+                        android:textColor="@color/color_white"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/image_outro"
+                        app:layout_constraintStart_toStartOf="@+id/image_outro" />
+
+                    <TextView
+                        android:id="@+id/text_name_outro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_video_duration"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingStart="3dp"
+                        android:paddingTop="1dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="1dp"
+                        android:text="00:00"
+                        android:visibility="visible"
+                        android:textColor="@color/color_white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/image_outro" />
+                </android.support.constraint.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/text_add_intro"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/bg_dialog_optimistic_idle"
+                    android:gravity="center"
+                    android:text="Add Intro"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/text_preview"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraint_intro" />
+
+                <TextView
+                    android:id="@+id/text_add_outro"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/bg_dialog_optimistic_idle"
+                    android:gravity="center"
+                    android:text="Add Outro"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/text_preview"
+                    app:layout_constraintTop_toBottomOf="@+id/constraint_intro" />
+
+                <TextView
+                    android:id="@+id/text_preview"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/bg_dialog_optimistic_idle"
+                    android:gravity="center"
+                    android:text="Preview"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_add_outro"
+                    app:layout_constraintEnd_toStartOf="@+id/text_add_outro"
+                    app:layout_constraintStart_toEndOf="@+id/text_add_intro"
+                    app:layout_constraintTop_toTopOf="@+id/text_add_outro" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <include layout="@layout/layout_progress_edit" />
+
+</FrameLayout>

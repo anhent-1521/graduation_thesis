@@ -53,7 +53,8 @@ class ExtensionUtil {
                 .setListener(null)
     }
 
-    fun TextView.onTouchChangeStyle(context: Context, downColor: Int, upColor: Int, downDrawable: Int, upDrawable: Int) {
+    private fun TextView.onTouchChangeStyle(context: Context, downColor: Int, upColor: Int, downDrawable: Int, upDrawable: Int) {
+        elevation = 8f
         setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {

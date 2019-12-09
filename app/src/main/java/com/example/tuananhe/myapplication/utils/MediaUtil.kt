@@ -86,7 +86,7 @@ class MediaUtil {
             return available
         }
 
-        fun isVideoHaveAudioTrack(path: String): Boolean {
+        fun isVideoHaveAudioTrack(path: String?): Boolean {
             val audioTrack: Boolean
 
             val retriever = MediaMetadataRetriever()
