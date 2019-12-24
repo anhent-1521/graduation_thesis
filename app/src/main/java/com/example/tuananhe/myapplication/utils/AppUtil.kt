@@ -5,22 +5,31 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
-import android.provider.Settings
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.example.tuananhe.myapplication.screen.main.HomeActivity
 import com.example.tuananhe.myapplication.screen.transparent.TransparentActivity
 import com.example.tuananhe.myapplication.service.record.RecordService
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.Exception
+import java.lang.Long
 
 
 class AppUtil {
     companion object {
+
+        const val EXTRA_SHOW_SETTING = "EXTRA_SHOW_SETTING"
+
         fun changeTitleBarColor(activity: Activity, color: Int) {
             val window = activity.window
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -58,9 +67,10 @@ class AppUtil {
             context.startActivity(intent)
         }
 
-        fun startHome(context: Context) {
+        fun startHome(context: Context, isSetting: Boolean? = false) {
             val intent = Intent(context, HomeActivity::class.java)
             intent.flags = FLAG_ACTIVITY_NEW_TASK
+            intent.putExtra(EXTRA_SHOW_SETTING, isSetting)
             context.startActivity(intent)
         }
 
@@ -77,12 +87,29 @@ class AppUtil {
             context.startService(intent)
         }
 
-        /**
-         * Show touch setting
-         */
-        fun showTouches(context: Context, setting: Int) {
-            Settings.System.putInt(context.contentResolver, "show_touches", setting)
-        }
+        fun takeScreenShot(activity: Activity) {
+            val view = activity.window.decorView.rootView
+            activity.resources.displayMetrics.widthPixels
+            try {
+                val bitmap = Bitmap.createBitmap(activity.resources.displayMetrics.widthPixels,
+                        activity.resources.displayMetrics.heightPixels, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bitmap)
+                view.draw(canvas)
 
+                val setting = Settings.getSetting()
+                val screenshot = File(setting.rootDirectory, "Screenshot"
+                        + Long.toHexString(System.currentTimeMillis()) + ".png")
+
+                val outputStream = FileOutputStream(screenshot)
+                val quality = 100
+                bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream)
+                outputStream.flush()
+                outputStream.close()
+            } catch (e: Exception) {
+                Log.d("okokokok", e.message)
+            } finally {
+                activity.finish()
+            }
+        }
     }
 }

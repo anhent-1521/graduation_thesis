@@ -21,10 +21,13 @@ class Constant {
         const val STOP_RECORD = "STOP_RECORD"
         const val EXIT_RECORD = "EXIT_RECORD"
         const val HIDE_NOTI = "HIDE_NOTI"
+        const val START_SCREEN_SHOT = "START_SCREEN_SHOT"
+        const val END_SCREEN_SHOT = "END_SCREEN_SHOT"
 
         const val EXTRA_RESULT_CODE = "EXTRA_RESULT_CODE"
         const val EXTRA_DATA_INTENT = "EXTRA_DATA_INTENT"
         const val RECORD_REQUEST_CODE = 21
+        const val SCREENSHOT_REQUEST_CODE = 8
 
         const val RECORD_STATE_STARTED = 0
         const val RECORD_STATE_PAUSED = 1

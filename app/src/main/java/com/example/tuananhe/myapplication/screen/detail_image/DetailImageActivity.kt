@@ -12,6 +12,7 @@ import com.example.tuananhe.myapplication.screen.image.ImagePresenter
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
+import com.example.tuananhe.myapplication.utils.Settings
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.ImageInfoDialog
 import kotlinx.android.synthetic.main.activity_detail_image.*
@@ -32,8 +33,8 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
 
         linear_share.setOnClickListener {
             FileUtil.shareImage(
-                this,
-                images[view_pager.currentItem].path
+                    this,
+                    images[view_pager.currentItem].path
             )
         }
 
@@ -49,7 +50,8 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
 
     override fun initComponents() {
         imageRetriever = ImagePresenter(this)
-        imageRetriever?.loadImages(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + Constant.IMAGE_DIRECTORY)
+        val settings = Settings.getSetting()
+        imageRetriever?.loadImages(settings.rootImageDirectory)
     }
 
     override fun onGetImageSuccess(images: ArrayList<Image>) {

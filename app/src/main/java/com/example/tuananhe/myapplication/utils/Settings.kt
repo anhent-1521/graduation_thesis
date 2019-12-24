@@ -21,6 +21,7 @@ class Settings {
         var DEFAULT_ROOT_DIRECTORY =
                 (Environment.getExternalStorageDirectory() as File).canonicalPath.plus("/MoonRecord")
         var DEFAULT_VIDEO_DIRECTORY = DEFAULT_ROOT_DIRECTORY.plus("/video")
+        var DEFAULT_IMAGE_DIRECTORY = DEFAULT_ROOT_DIRECTORY.plus("/image")
         var SDCARD_VIDEO_DIRECTORY = App.getSDCardRoot()
 
         private val gson = Gson()
@@ -52,6 +53,7 @@ class Settings {
             settings.isShowControl = true
             settings.countDown = DEFAULT_COUNT_DOWN
             settings.rootDirectory = DEFAULT_VIDEO_DIRECTORY
+            settings.rootImageDirectory = DEFAULT_IMAGE_DIRECTORY
 
             return settings
         }
@@ -69,5 +71,6 @@ class Settings {
 
     var isRecordAudio: Boolean = false
     var rootDirectory: String = ""
+    var rootImageDirectory: String = ""
     var isShowControl: Boolean = false
 }

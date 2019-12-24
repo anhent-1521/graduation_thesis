@@ -38,6 +38,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tuananhe.myapplication.App;
 import com.example.tuananhe.myapplication.R;
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.FloatingActionMenu;
 import com.example.tuananhe.myapplication.floating_bubble.circularfloatingactionmenu.SubActionButton;
@@ -647,8 +648,15 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         item2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppUtil.Companion.startHome(context);
+                AppUtil.Companion.startHome(context, false);
                 mFloatingActionMenu.toggle(true);
+            }
+        });
+        item3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFloatingActionMenu.toggle(true);
+                AppUtil.Companion.startTransparentRecord(context, Constant.START_SCREEN_SHOT);
             }
         });
         item4.setOnClickListener(new View.OnClickListener() {
@@ -661,6 +669,8 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
                     } else if (recordState == Constant.RECORD_STATE_PAUSED) {
                         AppUtil.Companion.controlRecord(context, Constant.RESUME_RECORD);
                     }
+                } else {
+                    AppUtil.Companion.startHome(context, true);
                 }
                 mFloatingActionMenu.toggle(true);
             }

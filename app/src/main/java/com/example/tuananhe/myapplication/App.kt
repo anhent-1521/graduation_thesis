@@ -55,6 +55,7 @@ class App : Application() {
     private fun createRootFolder() {
         createFolder(Settings.DEFAULT_ROOT_DIRECTORY)
         createFolder(Settings.DEFAULT_VIDEO_DIRECTORY)
+        createFolder(Settings.DEFAULT_IMAGE_DIRECTORY)
         createSDCardRoot()
     }
 

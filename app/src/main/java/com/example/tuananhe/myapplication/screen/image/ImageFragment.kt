@@ -11,6 +11,7 @@ import com.example.tuananhe.myapplication.data.model.Image
 import com.example.tuananhe.myapplication.screen.detail_image.DetailImageActivity
 import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
+import com.example.tuananhe.myapplication.utils.Settings
 import kotlinx.android.synthetic.main.fragment_image.*
 import kotlinx.android.synthetic.main.fragment_image.button_turn_on
 import kotlinx.android.synthetic.main.fragment_image.layout_remind_permission
@@ -33,8 +34,8 @@ class ImageFragment : BaseFragment(), ImageContract.View {
     }
 
     override fun onGetImage() {
-        presenter.loadImages(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
-                + Constant.IMAGE_DIRECTORY)
+        val setting = Settings.getSetting()
+        presenter.loadImages(setting.rootImageDirectory)
 
     }
 
