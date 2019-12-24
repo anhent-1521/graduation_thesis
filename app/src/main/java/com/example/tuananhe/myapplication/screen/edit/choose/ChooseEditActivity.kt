@@ -9,6 +9,7 @@ import com.example.tuananhe.myapplication.screen.edit.rotate.RotateActivity
 import com.example.tuananhe.myapplication.screen.edit.speed.SpeedActivity
 import com.example.tuananhe.myapplication.screen.edit.trim.TrimActivity
 import kotlinx.android.synthetic.main.activity_choose_edit.*
+import com.example.tuananhe.myapplication.screen.edit.merge_video.MergeVideoActivity
 
 class ChooseEditActivity : BaseEditActivity() {
 
@@ -47,7 +48,7 @@ class ChooseEditActivity : BaseEditActivity() {
 
             }
             ItemEdit.ADD_INTRO -> {
-
+                clazz = MergeVideoActivity::class.java
             }
             ItemEdit.ADD_MUSIC -> {
 
