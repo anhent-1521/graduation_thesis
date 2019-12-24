@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.support.v4.view.ViewPager
 import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
+import com.example.tuananhe.myapplication.utils.AppUtil
 import com.example.tuananhe.myapplication.utils.Constant.Companion.COMMON_PERMISSION
 import com.example.tuananhe.myapplication.utils.Constant.Companion.OVERLAY_PERMISSION
 import com.example.tuananhe.myapplication.utils.Constant.Companion.TAB_COUNT
@@ -129,4 +130,14 @@ class HomeActivity : BaseActivity(), HomeContract.View {
         }
 
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            if (intent.getBooleanExtra(AppUtil.EXTRA_SHOW_SETTING, false)) {
+                view_pager.setCurrentItem(3, true)
+            }
+        }
+    }
+
 }

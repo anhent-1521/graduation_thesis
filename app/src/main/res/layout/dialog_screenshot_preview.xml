@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="530dp"
+    android:layout_margin="32dp"
+    android:background="@drawable/bg_dialog_optimistic_idle"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="18sp"
+        tools:text="StaticLayout: maxLineHeight should not be -1.  maxLines:1 lineCount:1" />
+
+    <ImageView
+        android:id="@+id/image_screenshot"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:scaleType="fitXY"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/button_close"
+        android:layout_width="64dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_dialog_optimistic_idle"
+        android:text="Close"
+        android:textColor="@color/colorPrimary"
+        tools:ignore="HardcodedText" />
+
+</LinearLayout>
