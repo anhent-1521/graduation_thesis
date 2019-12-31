@@ -9,26 +9,41 @@ import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
 import kotlinx.android.synthetic.main.item_choose_edit.view.*
 
-class ChooseAdapter : RecyclerView.Adapter<ChooseAdapter.ViewHolder>() {
+class ChooseAdapter(private val hasAudio: Boolean) :
+    RecyclerView.Adapter<ChooseAdapter.ViewHolder>() {
 
     var listener: ((ItemEdit) -> Unit)? = null
+    var items: ArrayList<ItemEdit> = arrayListOf()
+
+    init {
+        items = ItemEdit.EDITS
+        if (!hasAudio) {
+            items.removeAt(3)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ViewHolder =
-            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_choose_edit, parent, false))
+        ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_choose_edit,
+                parent,
+                false
+            )
+        )
 
-    override fun getItemCount(): Int = ItemEdit.EDITS.size
+    override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: ViewHolder, pos: Int) {
-        holder.bindData(ItemEdit.EDITS[pos])
+        holder.bindData(items[pos])
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindData(item: ItemEdit) {
             Glide.with(itemView.context)
-                    .load(item.image)
-                    .centerCrop()
-                    .into(itemView.image_edit)
+                .load(item.image)
+                .centerCrop()
+                .into(itemView.image_edit)
             itemView.text_edit.text = item.title
             itemView.setOnClickListener { listener?.invoke(item) }
         }
