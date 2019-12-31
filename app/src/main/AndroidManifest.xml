@@ -51,7 +51,6 @@
             android:name=".screen.transparent.TransparentActivity"
             android:launchMode="singleInstance"
             android:theme="@style/Transparent" />
-        <activity android:name=".screen.edit_video.EditVideoActivity" />
 
         <activity
             android:name=".screen.edit.choose.ChooseEditActivity"
@@ -80,6 +79,11 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".screen.edit.merge_video.MergeVideoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".screen.edit.remove_audio.RemoveAudioActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 

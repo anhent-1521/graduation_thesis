@@ -10,6 +10,8 @@ import com.example.tuananhe.myapplication.screen.edit.speed.SpeedActivity
 import com.example.tuananhe.myapplication.screen.edit.trim.TrimActivity
 import kotlinx.android.synthetic.main.activity_choose_edit.*
 import com.example.tuananhe.myapplication.screen.edit.merge_video.MergeVideoActivity
+import com.example.tuananhe.myapplication.screen.edit.remove_audio.RemoveAudioActivity
+import com.example.tuananhe.myapplication.utils.MediaUtil
 
 class ChooseEditActivity : BaseEditActivity() {
 
@@ -29,7 +31,7 @@ class ChooseEditActivity : BaseEditActivity() {
     }
 
     override fun setItemChoose() {
-        adapter = ChooseAdapter()
+        adapter = ChooseAdapter(MediaUtil.isVideoHaveAudioTrack(video.path))
         adapter?.listener = { item -> gotoEdit(item) }
         recycler_edit.adapter = adapter
     }
@@ -44,8 +46,8 @@ class ChooseEditActivity : BaseEditActivity() {
             ItemEdit.TRIM -> {
                 clazz = TrimActivity::class.java
             }
-            ItemEdit.ADD_IMAGE -> {
-
+            ItemEdit.REMOVE_AUDIO -> {
+                clazz = RemoveAudioActivity::class.java
             }
             ItemEdit.ADD_INTRO -> {
                 clazz = MergeVideoActivity::class.java
