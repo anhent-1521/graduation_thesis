@@ -8,6 +8,7 @@ import android.media.MediaRecorder
 import android.net.ParseException
 import android.text.format.DateUtils
 import java.io.File
+import java.lang.Exception
 import java.util.regex.Pattern
 
 class MediaUtil {
@@ -79,9 +80,9 @@ class MediaUtil {
                     available = false
 
                 }
-            } finally {
                 recorder.stop()
                 recorder.release()
+            } catch (e: Exception) {
             }
             return available
         }

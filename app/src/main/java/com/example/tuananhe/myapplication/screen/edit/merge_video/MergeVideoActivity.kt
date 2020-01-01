@@ -47,7 +47,7 @@ class MergeVideoActivity : BaseEditActivity(), MergeContract.View {
 
     private fun onClickAddVideo(type: Int) {
         val intent = Intent()
-        intent.type = "video/*"
+        intent.type = "audio/mpeg"
         intent.action = Intent.ACTION_PICK
         startActivityForResult(intent, CHOOSE_VIDEO_CODE)
         videoType = type

@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.lang.Exception
 import java.lang.Long
 
 class MergePresenter(private val view: MergeContract.View) : MergeContract.Presenter {
@@ -72,94 +73,99 @@ class MergePresenter(private val view: MergeContract.View) : MergeContract.Prese
             Toast.makeText(view.provideContext(), "Intro and Outro are not chosen", Toast.LENGTH_LONG).show()
             return
         }
-        var count = 1
-        val cmd = ArrayList<String?>()
-        if (!TextUtils.isEmpty(editInfo.introPath)) {
+        try {
+            var count = 1
+            val cmd = ArrayList<String?>()
+            if (!TextUtils.isEmpty(editInfo.introPath)) {
+                cmd.add("-i")
+                cmd.add(editInfo.introPath)
+                count++
+            }
             cmd.add("-i")
-            cmd.add(editInfo.introPath)
-            count++
-        }
-        cmd.add("-i")
-        cmd.add(sourcePath)
-        if (!TextUtils.isEmpty(editInfo.outroPath)) {
-            cmd.add("-i")
-            cmd.add(editInfo.outroPath)
-            count++
-        }
-        cmd.add("-filter_complex")
-        var filter: String
-        if (!TextUtils.isEmpty(editInfo.introPath) && !TextUtils.isEmpty(editInfo.outroPath)) {
-            filter = if (isSourceVideoHasAudio) {
-                "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
-                        "[2:v]scale=${video.width}/${video.height},setsar=1/1[v2];" +
-                        "[v0][0:a][1:v][1:a][v2][2:a] concat=n=3:v=1:a=1"
+            cmd.add(sourcePath)
+            if (!TextUtils.isEmpty(editInfo.outroPath)) {
+                cmd.add("-i")
+                cmd.add(editInfo.outroPath)
+                count++
+            }
+            cmd.add("-filter_complex")
+            var filter: String
+            if (!TextUtils.isEmpty(editInfo.introPath) && !TextUtils.isEmpty(editInfo.outroPath)) {
+                filter = if (isSourceVideoHasAudio) {
+                    "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
+                            "[2:v]scale=${video.width}/${video.height},setsar=1/1[v2];" +
+                            "[v0][0:a][1:v][1:a][v2][2:a] concat=n=3:v=1:a=1"
+                } else {
+                    "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
+                            "[2:v]scale=${video.width}/${video.height},setsar=1/1[v2];" +
+                            "[v0][1:v][v2] concat=n=3:v=1"
+                }
             } else {
-                "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
-                        "[2:v]scale=${video.width}/${video.height},setsar=1/1[v2];" +
-                        "[v0][1:v][v2] concat=n=3:v=1"
-            }
-        } else {
-            filter = if (isSourceVideoHasAudio) {
-                "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
-                        "[1:v]scale=${video.width}/${video.height},setsar=1/1[v1];" +
-                        "[v0][0:a][v1][1:a] concat=n=2:v=1:a=1"
-            } else {
-                "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
-                        "[1:v]scale=${video.width}/${video.height},setsar=1/1[v1];" +
-                        "[v0][v1] concat=n=2:v=1"
-            }
-        }
-        cmd.add(filter)
-        cmd.add("-ab")
-        cmd.add("48000")
-        cmd.add("-ac")
-        cmd.add("2")
-        cmd.add("-ar")
-        cmd.add("44100")
-        cmd.add("-vcodec")
-        cmd.add("libx264")
-        cmd.add("-crf")
-        cmd.add("27")
-        cmd.add("-q")
-        cmd.add("4")
-
-        cmd.add("-vsync")
-        cmd.add("0")
-        cmd.add("-preset")
-        cmd.add("ultrafast")
-        cmd.add(desPath)
-        Log.d("==============", cmd.toString())
-        ffmpeg?.execute(cmd.toTypedArray(), object : ExecuteBinaryResponseHandler() {
-
-            override fun onStart() {
-                view.showProgress()
-            }
-
-            override fun onProgress(message: String?) {
-                if (message!!.contains("time=")) {
-                    val time = MediaUtil.extractTime(message)
-                    var percent = (time * 1.0f / (video.duration + extraDuration) * 100).toInt()
-                    if (percent >= 100) {
-                        percent = 99
-                    }
-                    view.updateProgress(percent)
+                filter = if (isSourceVideoHasAudio) {
+                    "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
+                            "[1:v]scale=${video.width}/${video.height},setsar=1/1[v1];" +
+                            "[v0][0:a][v1][1:a] concat=n=2:v=1:a=1"
+                } else {
+                    "[0:v]scale=${video.width}/${video.height},setsar=1/1[v0];" +
+                            "[1:v]scale=${video.width}/${video.height},setsar=1/1[v1];" +
+                            "[v0][v1] concat=n=2:v=1"
                 }
             }
+            cmd.add(filter)
+            cmd.add("-ab")
+            cmd.add("48000")
+            cmd.add("-ac")
+            cmd.add("2")
+            cmd.add("-ar")
+            cmd.add("44100")
+            cmd.add("-vcodec")
+            cmd.add("libx264")
+            cmd.add("-crf")
+            cmd.add("27")
+            cmd.add("-q")
+            cmd.add("4")
 
-            override fun onFailure(message: String?) {
-                Log.d("==============", message)
-                Toast.makeText(view.provideContext(), "Failed", Toast.LENGTH_LONG).show()
-            }
+            cmd.add("-vsync")
+            cmd.add("0")
+            cmd.add("-preset")
+            cmd.add("ultrafast")
+            cmd.add(desPath)
+            Log.d("==============", cmd.toString())
+            ffmpeg?.execute(cmd.toTypedArray(), object : ExecuteBinaryResponseHandler() {
 
-            override fun onSuccess(message: String?) {
-                Toast.makeText(view.provideContext(), "Success", Toast.LENGTH_LONG).show()
-                previewEditVideo()
-            }
+                override fun onStart() {
+                    view.showProgress()
+                }
 
-            override fun onFinish() {
-                view.hideProgress()
-            }
-        })
+                override fun onProgress(message: String?) {
+                    if (message!!.contains("time=")) {
+                        val time = MediaUtil.extractTime(message)
+                        var percent = (time * 1.0f / (video.duration + extraDuration) * 100).toInt()
+                        if (percent >= 100) {
+                            percent = 99
+                        }
+                        view.updateProgress(percent)
+                    }
+                }
+
+                override fun onFailure(message: String?) {
+                    Log.d("==============", message)
+                    Toast.makeText(view.provideContext(), "Failed", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onSuccess(message: String?) {
+                    Toast.makeText(view.provideContext(), "Success", Toast.LENGTH_LONG).show()
+                    previewEditVideo()
+                }
+
+                override fun onFinish() {
+                    view.hideProgress()
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(view.provideContext(), "Some thing wrong. Please try again!", Toast.LENGTH_LONG).show()
+        }
 
     }
 

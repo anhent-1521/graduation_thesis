@@ -5,6 +5,7 @@ import com.example.tuananhe.myapplication.BaseEditActivity
 import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
+import com.example.tuananhe.myapplication.screen.edit.add_music.AddMusicActivity
 import com.example.tuananhe.myapplication.screen.edit.rotate.RotateActivity
 import com.example.tuananhe.myapplication.screen.edit.speed.SpeedActivity
 import com.example.tuananhe.myapplication.screen.edit.trim.TrimActivity
@@ -53,7 +54,7 @@ class ChooseEditActivity : BaseEditActivity() {
                 clazz = MergeVideoActivity::class.java
             }
             ItemEdit.ADD_MUSIC -> {
-
+                clazz = AddMusicActivity::class.java
             }
             ItemEdit.REMOVE_MIDDLE -> {
                 clazz = TrimActivity::class.java
