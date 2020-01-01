@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.lang.Exception
 import java.lang.Long
 
 class RotatePresenter(val view: RotateContract.View) : RotateContract.Presenter {
@@ -88,8 +89,9 @@ class RotatePresenter(val view: RotateContract.View) : RotateContract.Presenter 
                     view.hideProgress()
                 }
             })
-        } catch (e: FFmpegCommandAlreadyRunningException) {
+        }  catch (e: Exception) {
             e.printStackTrace()
+            Toast.makeText(view.provideContext(), "Some thing wrong. Please try again!", Toast.LENGTH_LONG).show()
         }
 
 

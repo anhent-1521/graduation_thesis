@@ -28,6 +28,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:allowBackup">
+
         <activity
             android:name=".screen.main.HomeActivity"
             android:launchMode="singleTask"
@@ -51,7 +52,6 @@
             android:name=".screen.transparent.TransparentActivity"
             android:launchMode="singleInstance"
             android:theme="@style/Transparent" />
-
         <activity
             android:name=".screen.edit.choose.ChooseEditActivity"
             android:screenOrientation="portrait"
@@ -72,7 +72,6 @@
             android:name=".screen.edit.preview.SpeedPreviewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/DetailImageTheme" />
-
         <activity
             android:name=".screen.edit.rotate.RotateActivity"
             android:screenOrientation="portrait"
@@ -81,9 +80,17 @@
             android:name=".screen.edit.merge_video.MergeVideoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".screen.edit.remove_audio.RemoveAudioActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".screen.edit.add_music.AddMusicActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".screen.edit.add_music.SongActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 

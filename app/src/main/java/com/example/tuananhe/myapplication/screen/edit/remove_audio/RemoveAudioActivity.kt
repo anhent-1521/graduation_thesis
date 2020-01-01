@@ -55,6 +55,7 @@ class RemoveAudioActivity : BaseEditActivity(), RemoveAudioContract.View {
     private val presenter = RemoveAudioPresenter(this)
 
     override fun initView() {
+        presenter.initFFmpeg()
     }
 
     override fun getEditTitle(): String = "Remove Audio"

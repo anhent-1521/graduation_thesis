@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.*
+import java.lang.Exception
 import java.lang.Long
 
 class TrimPresenter(val view: TrimContract.View) : TrimContract.Presenter {
@@ -141,8 +142,9 @@ class TrimPresenter(val view: TrimContract.View) : TrimContract.Presenter {
                     Log.w("onFinish", "FFmpeg finish")
                 }
             })
-        } catch (e: FFmpegCommandAlreadyRunningException) {
+        }  catch (e: Exception) {
             e.printStackTrace()
+            Toast.makeText(view.provideContext(), "Some thing wrong. Please try again!", Toast.LENGTH_LONG).show()
         }
 
     }
@@ -182,100 +184,105 @@ class TrimPresenter(val view: TrimContract.View) : TrimContract.Presenter {
         desPath2 = outputFile2.canonicalPath
         val cmd1 = arrayOf("-i", sourcePath, "-ss", "0",
                 "-t", "${info.start.toInt()}", "-c", "copy", "-preset", "ultrafast", desPath1)
-        ffmpeg?.execute(cmd1, object : ExecuteBinaryResponseHandler() {
+        try {
+            ffmpeg?.execute(cmd1, object : ExecuteBinaryResponseHandler() {
 
-            override fun onStart() {
-                Log.w("onStart", "Ffmpeg onStart  ${cmd1.toList()}")
-            }
-
-            override fun onProgress(message: String?) {
-                Log.w("onProgress", "Ffmpeg onProgress  $message")
-            }
-
-            override fun onFailure(message: String?) {
-                FileUtil.deleteFile(desPath1)
-                FileUtil.deleteFile(desPath2)
-                Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onSuccess(message: String?) {
-                Handler().postDelayed({
-                    val cmd2 = arrayOf("-i", sourcePath, "-ss", "${info.duration.toInt()}",
-                            "-t", "${video.duration}", "-c", "copy", desPath2)
-                    ffmpeg?.execute(cmd2, object : ExecuteBinaryResponseHandler() {
-
-                        override fun onStart() {
-                            Log.w("onStart", "Ffmpeg onStart  ${cmd2.toList()}")
-                        }
-
-                        override fun onProgress(message: String?) {
-                        }
-
-                        override fun onFailure(message: String?) {
-                            FileUtil.deleteFile(desPath1)
-                            FileUtil.deleteFile(desPath2)
-                            Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
-                        }
-
-                        override fun onSuccess(message: String?) {
-                            val cmd = arrayOf("-i", desPath1, "-i", desPath2, "-filter_complex",
-                                    "[0:v][1:v]concat=2:v=1 [v]",
-                                    "-map", "[v]",
-                                    "-vsync", "0", "-preset", "ultrafast", desPath)
-                            ffmpeg?.execute(cmd, object : ExecuteBinaryResponseHandler() {
-
-                                override fun onStart() {
-                                    Log.w("onStart", "Ffmpeg start  ${cmd.toList()}")
-                                    view.showProgress()
-                                }
-
-                                override fun onProgress(message: String?) {
-                                    Log.w("onProgress", "Ffmpeg onProgress  $message")
-                                    if (message!!.indexOf("time=") != -1) {
-                                        val time = MediaUtil.extractTime(message)
-                                        var percent = if (info.editType == ItemEdit.TRIM)
-                                            (time * 1.0f / video.duration * 100).toInt()
-                                        else
-                                            (time * 1.0f / (video.duration -
-                                                    (info.duration.toInt() + 1 - info.start.toInt())) * 100).toInt()
-                                        if (percent >= 100) {
-                                            percent = 99
-                                        }
-                                        Log.w("onProgressonProgrs", "$percent")
-                                        view.updateProgress(percent)
-                                    }
-                                }
-
-                                override fun onFailure(message: String?) {
-                                    Log.w("onFailure", "FFmpeg failure: " + message!!)
-                                    Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
-                                }
-
-                                override fun onSuccess(message: String?) {
-                                    Log.w("onSuccess", "FFmpeg success: " + message!!)
-                                    Toast.makeText(view.provideContext(), "Success", Toast.LENGTH_SHORT).show()
-                                    view.updateProgress(100)
-                                    previewEditVideo()
-                                }
-
-                                override fun onFinish() {
-                                    view.hideProgress()
-                                    Log.w("onFinish", "FFmpeg finish")
-                                }
-                            })
-                        }
-
-                        override fun onFinish() {
-
-                        }
-                    })
+                override fun onStart() {
+                    Log.w("onStart", "Ffmpeg onStart  ${cmd1.toList()}")
                 }
-                        , 100)
-            }
 
-            override fun onFinish() {
-            }
-        })
+                override fun onProgress(message: String?) {
+                    Log.w("onProgress", "Ffmpeg onProgress  $message")
+                }
+
+                override fun onFailure(message: String?) {
+                    FileUtil.deleteFile(desPath1)
+                    FileUtil.deleteFile(desPath2)
+                    Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onSuccess(message: String?) {
+                    Handler().postDelayed({
+                        val cmd2 = arrayOf("-i", sourcePath, "-ss", "${info.duration.toInt()}",
+                                "-t", "${video.duration}", "-c", "copy", desPath2)
+                        ffmpeg?.execute(cmd2, object : ExecuteBinaryResponseHandler() {
+
+                            override fun onStart() {
+                                Log.w("onStart", "Ffmpeg onStart  ${cmd2.toList()}")
+                            }
+
+                            override fun onProgress(message: String?) {
+                            }
+
+                            override fun onFailure(message: String?) {
+                                FileUtil.deleteFile(desPath1)
+                                FileUtil.deleteFile(desPath2)
+                                Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
+                            }
+
+                            override fun onSuccess(message: String?) {
+                                val cmd = arrayOf("-i", desPath1, "-i", desPath2, "-filter_complex",
+                                        "[0:v][1:v]concat=2:v=1 [v]",
+                                        "-map", "[v]",
+                                        "-vsync", "0", "-preset", "ultrafast", desPath)
+                                ffmpeg?.execute(cmd, object : ExecuteBinaryResponseHandler() {
+
+                                    override fun onStart() {
+                                        Log.w("onStart", "Ffmpeg start  ${cmd.toList()}")
+                                        view.showProgress()
+                                    }
+
+                                    override fun onProgress(message: String?) {
+                                        Log.w("onProgress", "Ffmpeg onProgress  $message")
+                                        if (message!!.indexOf("time=") != -1) {
+                                            val time = MediaUtil.extractTime(message)
+                                            var percent = if (info.editType == ItemEdit.TRIM)
+                                                (time * 1.0f / video.duration * 100).toInt()
+                                            else
+                                                (time * 1.0f / (video.duration -
+                                                        (info.duration.toInt() + 1 - info.start.toInt())) * 100).toInt()
+                                            if (percent >= 100) {
+                                                percent = 99
+                                            }
+                                            Log.w("onProgressonProgrs", "$percent")
+                                            view.updateProgress(percent)
+                                        }
+                                    }
+
+                                    override fun onFailure(message: String?) {
+                                        Log.w("onFailure", "FFmpeg failure: " + message!!)
+                                        Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    override fun onSuccess(message: String?) {
+                                        Log.w("onSuccess", "FFmpeg success: " + message!!)
+                                        Toast.makeText(view.provideContext(), "Success", Toast.LENGTH_SHORT).show()
+                                        view.updateProgress(100)
+                                        previewEditVideo()
+                                    }
+
+                                    override fun onFinish() {
+                                        view.hideProgress()
+                                        Log.w("onFinish", "FFmpeg finish")
+                                    }
+                                })
+                            }
+
+                            override fun onFinish() {
+
+                            }
+                        })
+                    }
+                            , 100)
+                }
+
+                override fun onFinish() {
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(view.provideContext(), "Some thing wrong. Please try again!", Toast.LENGTH_LONG).show()
+        }
     }
 
 }
