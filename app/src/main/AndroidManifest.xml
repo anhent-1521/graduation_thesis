@@ -94,6 +94,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
+        <activity android:name=".screen.all_video.AllVideoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.file.provider"
