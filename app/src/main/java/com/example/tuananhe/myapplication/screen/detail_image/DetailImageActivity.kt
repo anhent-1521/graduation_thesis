@@ -1,7 +1,6 @@
 package com.example.tuananhe.myapplication.screen.detail_image
 
 import android.app.Activity
-import android.os.Environment
 import android.support.v4.view.ViewPager
 import android.view.View.VISIBLE
 import com.example.tuananhe.myapplication.BaseActivity
@@ -9,7 +8,6 @@ import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Image
 import com.example.tuananhe.myapplication.screen.image.ImageContract
 import com.example.tuananhe.myapplication.screen.image.ImagePresenter
-import com.example.tuananhe.myapplication.utils.Constant
 import com.example.tuananhe.myapplication.utils.ExtensionUtil
 import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.Settings
@@ -33,8 +31,8 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
 
         linear_share.setOnClickListener {
             FileUtil.shareImage(
-                    this,
-                    images[view_pager.currentItem].path
+                this,
+                images[view_pager.currentItem].path
             )
         }
 
@@ -50,8 +48,13 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
 
     override fun initComponents() {
         imageRetriever = ImagePresenter(this)
-        val settings = Settings.getSetting()
-        imageRetriever?.loadImages(settings.rootImageDirectory)
+        val images = intent.getParcelableArrayListExtra<Image>("images")
+        if (images == null) {
+            val settings = Settings.getSetting()
+            imageRetriever?.loadImages(settings.rootImageDirectory)
+        } else {
+            onGetImageSuccess(images)
+        }
     }
 
     override fun onGetImageSuccess(images: ArrayList<Image>) {
