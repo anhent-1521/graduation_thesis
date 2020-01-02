@@ -17,19 +17,16 @@ class VideoHelper {
                 val uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                 val projection = arrayOf(MediaStore.Video.VideoColumns.DATA)
                 val cursor = context.contentResolver.query(uri, projection, null, null, null)
-                val pathArrList = ArrayList<String>()
                 if (cursor != null) {
+                    val metadataRetriever = MediaMetadataRetriever()
                     while (cursor.moveToNext()) {
-                        pathArrList.add(cursor.getString(0))
+                        val path = cursor.getString(0)
+                        val video = FileUtil.extractVideo(metadataRetriever, File(path), path)
+                        if (video != null && video.duration > 3L) {
+                            videos.add(video)
+                        }
                     }
                     cursor.close()
-                }
-                val metadataRetriever = MediaMetadataRetriever()
-                for (a in pathArrList) {
-                    val video = FileUtil.extractVideo(metadataRetriever, File(a), a)
-                    if (video != null && video.duration > 3L) {
-                        videos.add(video)
-                    }
                 }
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()

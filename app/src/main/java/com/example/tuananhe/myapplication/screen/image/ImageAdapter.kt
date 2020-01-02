@@ -14,6 +14,7 @@ class ImageAdapter(private var images: ArrayList<Image>) :
     RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
 
     var listener: ((Int) -> Unit)? = null
+    var clickListener: ((Image) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false))
@@ -45,7 +46,10 @@ class ImageAdapter(private var images: ArrayList<Image>) :
                 .centerCrop()
                 .into(itemView.image_thumbnail)
             itemView.image_thumbnail.width
-            itemView.setOnClickListener { listener?.invoke(position) }
+            itemView.setOnClickListener {
+                listener?.invoke(position)
+                clickListener?.invoke(image)
+            }
         }
     }
 

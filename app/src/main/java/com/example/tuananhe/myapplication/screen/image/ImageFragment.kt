@@ -41,7 +41,7 @@ class ImageFragment : BaseFragment(), ImageContract.View {
 
     override fun onGetImageSuccess(images: ArrayList<Image>) {
         imageAdapter = ImageAdapter(images)
-        imageAdapter?.listener = { pos -> gotoDetailImage(pos) }
+        imageAdapter?.listener = { pos -> gotoDetailImage(pos, images) }
         recycler_images.adapter = imageAdapter
     }
 
@@ -61,9 +61,10 @@ class ImageFragment : BaseFragment(), ImageContract.View {
         recycler_images.visibility = View.VISIBLE
     }
 
-    private fun gotoDetailImage(pos: Int) {
+    private fun gotoDetailImage(pos: Int, images: ArrayList<Image>) {
         val intent = Intent(context, DetailImageActivity::class.java)
         intent.putExtra("position", pos)
+        intent.putExtra("images", images)
         startActivity(intent)
     }
 

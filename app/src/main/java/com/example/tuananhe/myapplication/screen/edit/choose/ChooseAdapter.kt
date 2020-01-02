@@ -16,7 +16,10 @@ class ChooseAdapter(private val hasAudio: Boolean) :
     var items: ArrayList<ItemEdit> = arrayListOf()
 
     init {
-        items = ItemEdit.EDITS
+        items = ItemEdit.getEdits()
+        if (!hasAudio) {
+            items.removeAt(3)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ViewHolder =
@@ -37,9 +40,6 @@ class ChooseAdapter(private val hasAudio: Boolean) :
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindData(item: ItemEdit) {
-            if (!hasAudio && adapterPosition == 3) {
-                return
-            }
             Glide.with(itemView.context)
                 .load(item.image)
                 .centerCrop()
