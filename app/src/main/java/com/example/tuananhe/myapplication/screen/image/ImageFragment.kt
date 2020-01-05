@@ -36,13 +36,14 @@ class ImageFragment : BaseFragment(), ImageContract.View {
     override fun onGetImage() {
         val setting = Settings.getSetting()
         presenter.loadImages(setting.rootImageDirectory)
-
     }
 
     override fun onGetImageSuccess(images: ArrayList<Image>) {
-        imageAdapter = ImageAdapter(images)
-        imageAdapter?.listener = { pos -> gotoDetailImage(pos, images) }
-        recycler_images.adapter = imageAdapter
+        if (recycler_images != null) {
+            imageAdapter = ImageAdapter(images)
+            imageAdapter?.listener = { pos -> gotoDetailImage(pos, images) }
+            recycler_images.adapter = imageAdapter
+        }
     }
 
     override fun onGetImageFail() {

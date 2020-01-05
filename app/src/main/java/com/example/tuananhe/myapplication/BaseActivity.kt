@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.AppUtil
 

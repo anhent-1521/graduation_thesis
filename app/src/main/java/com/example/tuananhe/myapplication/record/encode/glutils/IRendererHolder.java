@@ -19,7 +19,7 @@ package com.example.tuananhe.myapplication.record.encode.glutils;
 */
 
 import android.graphics.SurfaceTexture;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.Surface;
 
 /**

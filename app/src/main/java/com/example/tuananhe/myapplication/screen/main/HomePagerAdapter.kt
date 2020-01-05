@@ -1,8 +1,8 @@
 package com.example.tuananhe.myapplication.screen.main
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import com.example.tuananhe.myapplication.screen.edit.EditFragment
 import com.example.tuananhe.myapplication.screen.image.ImageFragment
 import com.example.tuananhe.myapplication.screen.setting.SettingFragment
