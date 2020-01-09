@@ -18,4 +18,5 @@
     <color name="color_overlay">#80000000</color>
     <color name="transparent">#00000000</color>
     <color name="yellow">#FFEB3B</color>
+    <color name="bg_play_bar">#7e000000</color>
 </resources>

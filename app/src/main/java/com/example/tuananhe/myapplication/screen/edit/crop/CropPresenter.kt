@@ -1,12 +1,9 @@
-package com.example.tuananhe.myapplication.screen.edit.add_music
+package com.example.tuananhe.myapplication.screen.edit.crop
 
-import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import com.example.tuananhe.myapplication.EditInfo
-import com.example.tuananhe.myapplication.data.model.Song
 import com.example.tuananhe.myapplication.data.model.Video
 import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.MediaUtil
@@ -17,35 +14,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.File
+import java.lang.Exception
 import java.lang.Long
 
-class AddMusicPresenter(private val view: AddMusicContract.View) : AddMusicContract.Presenter {
+class CropPresenter(private val view: CropContract.View) : CropContract.Presenter {
 
     private var ffmpeg: FFmpeg? = null
     private lateinit var video: Video
     private var setting: Settings? = null
     private var desPath: String = ""
     var sourcePath: String = ""
-    private var song = Song(1, "title", 0, Uri.EMPTY)
-
-    override fun getSongs() {
-        val songs = SongHelper.getSongs(view.provideContext())
-        view.onGetsSong(songs)
-    }
-
-    override fun chooseSong(song: Song) {
-        this.song = song
-    }
 
     override fun initFFmpeg() {
         ffmpeg = FFmpeg.getInstance(view.provideContext())
         setting = Settings.getSetting()
-        val outputFile = File(
-                setting?.rootDirectory, "Edited-"
-                + Long.toHexString(System.currentTimeMillis()) + ".mp4"
-        )
+        val outputFile = File(setting?.rootDirectory, "Edited-"
+                + Long.toHexString(System.currentTimeMillis()) + ".mp4")
         desPath = outputFile.canonicalPath
     }
 
@@ -55,24 +40,15 @@ class AddMusicPresenter(private val view: AddMusicContract.View) : AddMusicContr
     }
 
     override fun doEdit(editInfo: EditInfo) {
-        if (song.duration < editInfo.start.toInt() || song.duration < editInfo.start.toInt() + editInfo.duration.toInt()) {
-            Toast.makeText(view.provideContext(), "Some thing wrong. Please try again!", Toast.LENGTH_LONG).show()
-        }
-        val end = video.duration - editInfo.duration.toInt()
-        val songFilter = if (MediaUtil.isVideoHaveAudioTrack(video.path)) {
-            "[1]atrim=0:${editInfo.duration.toInt() - editInfo.start.toInt()}" +
-                    ",adelay=${editInfo.start.toInt() * 1000}|${editInfo.start.toInt() * 1000}" +
-                    ",volume=1.0[a1];[0:a]volume=1.0[v0];" +
-                    "[v0][a1]amix=inputs=2:duration=first[a]"
-        } else {
-            "[1]atrim=0:${editInfo.duration.toInt() - editInfo.start.toInt()}" +
-                    ",adelay=${editInfo.start.toInt() * 1000}|${editInfo.start.toInt() * 1000}"+
-                    ",volume=1.0[a]"
-        }
+
+    }
+
+    override fun doEdit(xPos: Int, yPos: Int, cropW: Int, cropH: Int) {
+        Log.d("okokokok","$xPos $yPos $cropW $cropH")
         try {
             val cmd =
-                    arrayOf("-i", sourcePath, "-i", song.data.path, "-filter_complex", songFilter, "-map", "0:v", "-map",
-                            "[a]", "-vsync", "2", "-c:v", "copy", "-c:a", "aac", "-preset", "ultrafast", desPath)
+                    arrayOf("-i", sourcePath, "-vf", "crop=$cropW:$cropH:$xPos:$yPos",
+                            "-preset", "ultrafast", "-c:a", "copy", "-vsync", "2", desPath)
             ffmpeg?.execute(cmd, object : ExecuteBinaryResponseHandler() {
 
                 override fun onStart() {
@@ -92,7 +68,6 @@ class AddMusicPresenter(private val view: AddMusicContract.View) : AddMusicContr
                 }
 
                 override fun onFailure(message: String?) {
-                    Log.d("===========", message)
                     Toast.makeText(view.provideContext(), "Fail", Toast.LENGTH_SHORT).show()
                 }
 
@@ -106,7 +81,7 @@ class AddMusicPresenter(private val view: AddMusicContract.View) : AddMusicContr
                     view.hideProgress()
                 }
             })
-        } catch (e: Exception) {
+        }  catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(view.provideContext(), "Some thing wrong. Please try again!", Toast.LENGTH_LONG).show()
         }
@@ -132,39 +107,6 @@ class AddMusicPresenter(private val view: AddMusicContract.View) : AddMusicContr
                 view.onSuccess(video)
             }
         }
-    }
-
-    fun getListBitmap(video: Video) {
-        var bitmaps: ArrayList<Bitmap>
-        CoroutineScope(Dispatchers.IO).launch {
-            bitmaps = getBitmaps(video)
-            withContext(Dispatchers.Main) {
-                view.onGetListBitMap(bitmaps)
-            }
-        }
-    }
-
-    private fun getBitmaps(video: Video): ArrayList<Bitmap> {
-        var retriever: FFmpegMediaMetadataRetriever? = null
-        val bitmaps = ArrayList<Bitmap>()
-        try {
-            retriever = FFmpegMediaMetadataRetriever()
-            retriever.setDataSource(video.path)
-            for (i in 0..10) {
-                var timeUs = i * video.duration * 100000
-                if (timeUs == 0L) {
-                    timeUs = 100000L
-                }
-                val bitmap = retriever.getFrameAtTime(timeUs,
-                        FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC)
-                if (bitmap != null) {
-                    bitmaps.add(bitmap)
-                }
-            }
-        } catch (e: IllegalArgumentException) {
-        }
-        retriever?.release()
-        return bitmaps
     }
 
 }

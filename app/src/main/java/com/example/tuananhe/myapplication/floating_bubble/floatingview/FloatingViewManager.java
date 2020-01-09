@@ -549,7 +549,14 @@ public class FloatingViewManager implements ScreenChangedListener, View.OnTouchL
         if (mTargetFloatingView != null) {
             mTargetFloatingView.removeAllViews();
         }
-        floatingView.addView(view);
+        try {
+            floatingView.addView(view);
+        } catch (Exception e) {
+            if (view.getParent() != null) {
+                ((FloatingView)view.getParent()).removeAllViews();
+            }
+            floatingView.addView(view);
+        }
 
         // 非表示モードの場合
         if (mDisplayMode == DISPLAY_MODE_HIDE_ALWAYS) {

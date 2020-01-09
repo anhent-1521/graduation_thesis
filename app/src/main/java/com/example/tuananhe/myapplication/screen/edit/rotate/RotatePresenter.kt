@@ -51,7 +51,7 @@ class RotatePresenter(val view: RotateContract.View) : RotateContract.Presenter 
                 rotation = "transpose = 1"
             }
             2 -> {
-                rotation = "transpose = 2,togglePlaytranspose = 2"
+                rotation = "transpose = 2,transpose = 2"
             }
             3 -> {
                 rotation = "transpose = 2"
