@@ -2,7 +2,7 @@ package com.example.tuananhe.myapplication.utils.view.dialog
 
 import android.content.Context
 import android.content.DialogInterface
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.utils.Settings
 

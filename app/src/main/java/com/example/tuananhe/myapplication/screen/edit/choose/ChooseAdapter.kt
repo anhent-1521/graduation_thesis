@@ -1,6 +1,6 @@
 package com.example.tuananhe.myapplication.screen.edit.choose
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.example.tuananhe.myapplication.data.ItemEdit
 import kotlinx.android.synthetic.main.item_choose_edit.view.*
 
 class ChooseAdapter(private val hasAudio: Boolean) :
-    RecyclerView.Adapter<ChooseAdapter.ViewHolder>() {
+    androidx.recyclerview.widget.RecyclerView.Adapter<ChooseAdapter.ViewHolder>() {
 
     var listener: ((ItemEdit) -> Unit)? = null
     var items: ArrayList<ItemEdit> = arrayListOf()
@@ -37,7 +37,7 @@ class ChooseAdapter(private val hasAudio: Boolean) :
         holder.bindData(items[pos])
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         fun bindData(item: ItemEdit) {
             Glide.with(itemView.context)

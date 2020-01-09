@@ -1,7 +1,7 @@
 package com.example.tuananhe.myapplication.screen.video
 
 import android.Manifest
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.example.tuananhe.myapplication.BaseFragment
@@ -46,7 +46,9 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     override fun provideContext() = activity
 
     override fun onGetVideoSuccess(videos: ArrayList<Video>) {
-        setupAdapter(videos)
+        if (recycler_videos != null) {
+            setupAdapter(videos)
+        }
     }
 
     override fun onGetVideoFail() {
@@ -142,7 +144,7 @@ class VideoFragment : BaseFragment(), VideoContract.View {
     override fun onPause() {
         super.onPause()
         lastListPosition =
-            (recycler_videos.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+            (recycler_videos.layoutManager as androidx.recyclerview.widget.LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
         EventBus.getDefault().unregister(this)
     }
 

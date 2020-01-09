@@ -6,6 +6,7 @@ import com.example.tuananhe.myapplication.BaseFragment
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.ItemEdit
 import com.example.tuananhe.myapplication.screen.edit.add_music.AddMusicActivity
+import com.example.tuananhe.myapplication.screen.edit.crop.CropActivity
 import com.example.tuananhe.myapplication.screen.edit.rotate.RotateActivity
 import com.example.tuananhe.myapplication.screen.edit.speed.SpeedActivity
 import com.example.tuananhe.myapplication.screen.edit.trim.TrimActivity
@@ -60,7 +61,7 @@ class ChooseEditActivity : BaseEditActivity() {
                 clazz = TrimActivity::class.java
             }
             ItemEdit.CROP -> {
-
+                clazz = CropActivity::class.java
             }
             ItemEdit.SPEED -> {
                 clazz = SpeedActivity::class.java

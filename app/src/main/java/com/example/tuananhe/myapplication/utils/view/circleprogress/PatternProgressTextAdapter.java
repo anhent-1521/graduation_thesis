@@ -1,6 +1,6 @@
 package com.example.tuananhe.myapplication.utils.view.circleprogress;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public final class PatternProgressTextAdapter implements CircularProgressIndicator.ProgressTextAdapter {
 

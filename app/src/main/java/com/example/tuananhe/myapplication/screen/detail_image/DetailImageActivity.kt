@@ -1,8 +1,8 @@
 package com.example.tuananhe.myapplication.screen.detail_image
 
 import android.app.Activity
-import android.support.v4.view.ViewPager
 import android.view.View.VISIBLE
+import androidx.viewpager.widget.ViewPager
 import com.example.tuananhe.myapplication.BaseActivity
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.data.model.Image
@@ -13,9 +13,18 @@ import com.example.tuananhe.myapplication.utils.FileUtil
 import com.example.tuananhe.myapplication.utils.Settings
 import com.example.tuananhe.myapplication.utils.view.dialog.CommonDialog
 import com.example.tuananhe.myapplication.utils.view.dialog.ImageInfoDialog
+import iamutkarshtiwari.github.io.ananas.editimage.EditImageActivity
+import iamutkarshtiwari.github.io.ananas.editimage.ImageEditorIntentBuilder
 import kotlinx.android.synthetic.main.activity_detail_image.*
+import java.io.File
+import java.lang.Long
+
 
 class DetailImageActivity : BaseActivity(), ImageContract.View {
+
+    companion object{
+        private const val PHOTO_EDITOR_REQUEST_CODE = 231
+    }
 
     private var imageRetriever: ImagePresenter? = null
     private var images = ArrayList<Image>()
@@ -38,6 +47,9 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
 
         linear_delete.setOnClickListener {
             deleteImage(images[view_pager.currentItem])
+        }
+        linear_edit.setOnClickListener {
+            editImage(images[view_pager.currentItem])
         }
         image_info.setOnClickListener {
             ImageInfoDialog(this, images[view_pager.currentItem]).show()
@@ -115,6 +127,31 @@ class DetailImageActivity : BaseActivity(), ImageContract.View {
             finish()
         }
         dialog.show()
+
+    }
+
+    private fun editImage(image: Image) {
+        val setting = Settings.getSetting()
+        val outputFile = File(
+                setting.rootImageDirectory, "Edited-"
+                + Long.toHexString(System.currentTimeMillis()) + ".mp4"
+        )
+        try {
+            val intent = ImageEditorIntentBuilder(this, image.path, outputFile.path)
+                    .withAddText() // Add the features you need
+                    .withPaintFeature()
+                    .withFilterFeature()
+                    .withRotateFeature()
+                    .withCropFeature()
+                    .withBrightnessFeature()
+                    .withSaturationFeature()
+                    .withBeautyFeature()
+                    .withStickerFeature()
+                    .forcePortrait(true) // Add this to force portrait mode (It's set to false by default)
+                    .build()
+            EditImageActivity.start(this, intent, PHOTO_EDITOR_REQUEST_CODE)
+        } catch (e: Exception) {
+        }
 
     }
 }

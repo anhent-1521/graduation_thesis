@@ -20,7 +20,8 @@
             android:background="@color/color_black"
             android:orientation="vertical">
 
-            <LinearLayout
+            <FrameLayout
+                android:id="@+id/frame"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_gravity="center"
@@ -32,7 +33,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center" />
-            </LinearLayout>
+
+                <com.example.tuananhe.myapplication.screen.edit.crop.CropView
+                    android:id="@+id/crop_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -97,7 +103,7 @@
                     android:layout_margin="16dp"
                     android:background="@drawable/bg_dialog_optimistic_idle"
                     android:gravity="center"
-                    android:text="Remove Audio"
+                    android:text="Preview"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

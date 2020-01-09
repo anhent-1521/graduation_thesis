@@ -3,7 +3,7 @@ package com.example.tuananhe.myapplication.utils
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE

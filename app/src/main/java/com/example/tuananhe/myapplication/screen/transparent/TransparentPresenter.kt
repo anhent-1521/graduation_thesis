@@ -48,7 +48,7 @@ class TransparentPresenter(private val view: TransparentContract.View) : Transpa
         if (requestCode == SCREENSHOT_REQUEST_CODE) {
             Handler().postDelayed({
                 takeScreenShot(data, resultCode)
-            }, 100)
+            }, 300)
         }
     }
 

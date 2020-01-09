@@ -10,8 +10,8 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.content.res.ResourcesCompat
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View

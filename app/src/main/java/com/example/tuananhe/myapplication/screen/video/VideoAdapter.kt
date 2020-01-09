@@ -1,6 +1,6 @@
 package com.example.tuananhe.myapplication.screen.video
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +11,7 @@ import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.item_video.view.*
 
 class VideoAdapter(private var videos: ArrayList<Video>) :
-    RecyclerView.Adapter<VideoAdapter.ViewHolder>() {
+    androidx.recyclerview.widget.RecyclerView.Adapter<VideoAdapter.ViewHolder>() {
 
     var listener: ((Video) -> Unit)? = null
     var shareListener: ((String?) -> Unit)? = null
@@ -46,7 +46,7 @@ class VideoAdapter(private var videos: ArrayList<Video>) :
         notifyItemChanged(pos)
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         fun bindData(video: Video) {
             Glide.with(itemView.context)

@@ -4,7 +4,7 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import android.widget.RemoteViews
 
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
@@ -22,7 +22,7 @@ import android.app.PendingIntent.FLAG_CANCEL_CURRENT
 import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Color
 import android.os.Build
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import com.example.tuananhe.myapplication.R
 
 

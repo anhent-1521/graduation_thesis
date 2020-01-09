@@ -1,7 +1,7 @@
 package com.example.tuananhe.myapplication.screen.edit.add_music
 
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.example.tuananhe.myapplication.data.model.Song
 import com.example.tuananhe.myapplication.utils.MediaUtil
 import kotlinx.android.synthetic.main.item_song.view.*
 
-class SongAdapter(private val songs: ArrayList<Song>) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
+class SongAdapter(private val songs: ArrayList<Song>) : androidx.recyclerview.widget.RecyclerView.Adapter<SongAdapter.ViewHolder>() {
 
     var listener: ((Song) -> Unit)? = null
     var selected = -1
@@ -25,7 +25,7 @@ class SongAdapter(private val songs: ArrayList<Song>) : RecyclerView.Adapter<Son
         holder.bindData(songs[p1])
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         fun bindData(song: Song) {
             itemView.text_title.text = song.title

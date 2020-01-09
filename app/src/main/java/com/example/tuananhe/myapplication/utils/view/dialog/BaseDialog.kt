@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.v7.app.AppCompatDialog
+import androidx.appcompat.app.AppCompatDialog
 import android.view.ViewGroup
 import com.example.tuananhe.myapplication.R
 import com.example.tuananhe.myapplication.utils.ExtensionUtil

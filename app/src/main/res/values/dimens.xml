@@ -23,4 +23,9 @@
     <dimen name="bubble_thumb_width">70dp</dimen>
     <dimen name="bubble_thumb_height">70dp</dimen>
 
+    <dimen name="crop_minimum_size">30dp</dimen>
+    <dimen name="line_thick_ness">1dp</dimen>
+    <dimen name="default_padding_select">15dp</dimen>
+    <dimen name="border_thick_ness">3dp</dimen>
+
 </resources>

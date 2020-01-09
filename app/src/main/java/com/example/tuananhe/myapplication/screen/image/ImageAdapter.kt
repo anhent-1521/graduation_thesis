@@ -1,7 +1,7 @@
 package com.example.tuananhe.myapplication.screen.image
 
 import android.content.res.Resources
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +11,7 @@ import com.example.tuananhe.myapplication.data.model.Image
 import kotlinx.android.synthetic.main.item_image.view.*
 
 class ImageAdapter(private var images: ArrayList<Image>) :
-    RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
+    androidx.recyclerview.widget.RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
 
     var listener: ((Int) -> Unit)? = null
     var clickListener: ((Image) -> Unit)? = null
@@ -25,7 +25,7 @@ class ImageAdapter(private var images: ArrayList<Image>) :
         holder.bindData(images[position], position)
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         private var imageSize: Int = 0
 

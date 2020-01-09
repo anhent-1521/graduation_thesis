@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.WindowManager
 import com.example.tuananhe.myapplication.floating_bubble.floatingview.FloatingViewManager
 import com.example.tuananhe.myapplication.service.BubbleService
